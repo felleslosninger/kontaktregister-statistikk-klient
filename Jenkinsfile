@@ -17,7 +17,9 @@ stage('Build') {
             currentBuild.displayName = "#${currentBuild.number}: Deploy version ${version}"
             currentBuild.description = "Commit: ${commitId}"
             sh "pipeline/build.sh deliver ${version}"
-        } else if (env.BRANCH_NAME.matches(featureBranch)) {
+        }
+
+        else if (env.BRANCH_NAME.matches(featureBranch)) {
             jiraId = (env.BRANCH_NAME =~ featureBranch)[0][1]
             currentBuild.displayName = "#${currentBuild.number}: Build for feature ${jiraId}"
             currentBuild.description = "Feature: ${jiraId} Commit: ${commitId}"

@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.1.RELEASE</version>
+        <version>1.4.2.RELEASE</version>
     </parent>
 
     <scm>
@@ -21,9 +21,19 @@
     <properties>
         <java.version>1.8</java.version>
         <difi.docker.registry>docker.io/difi</difi.docker.registry>
+        <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
+        <junit5.surefire.plugin>1.0.0-M2</junit5.surefire.plugin>
+        <junit5.version>5.0.0-M2</junit5.version>
+        <ingestclient.version>201611211109</ingestclient.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>no.difi.statistics</groupId>
+            <artifactId>statistics-client-ingest</artifactId>
+            <version>${ingestclient.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -34,6 +44,19 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit5.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <build>
@@ -41,6 +64,24 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>${junit5.surefire.plugin}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <scope>compile</scope>
+                        <version>${junit5.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -156,4 +197,11 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>eid-releases</id>
+            <url>${artifactory.url}/libs-release-local</url>
+        </repository>
+    </repositories>
 </project>
