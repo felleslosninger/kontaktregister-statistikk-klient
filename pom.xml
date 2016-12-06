@@ -24,7 +24,7 @@
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
         <junit5.surefire.plugin>1.0.0-M2</junit5.surefire.plugin>
         <junit5.version>5.0.0-M2</junit5.version>
-        <ingestclient.version>201611211109</ingestclient.version>
+        <ingestclient.version>201612051518</ingestclient.version>
     </properties>
 
     <dependencies>
@@ -37,6 +37,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
@@ -145,7 +150,7 @@
                             <name>${difi.docker.registry}/${project.artifactId}:${project.version}</name>
                             <run>
                                 <ports>
-                                    <port>9000:9000</port>
+                                    <port>9000:8080</port>
                                 </ports>
                             </run>
                         </image>

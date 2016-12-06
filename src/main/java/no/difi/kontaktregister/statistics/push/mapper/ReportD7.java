@@ -21,6 +21,10 @@ enum ReportD7 {
         return mapval;
     }
 
+    public String id() {
+        return this.name().toLowerCase();
+    }
+
     public static ReportD7 fromString(String str) {
         if (str != null) {
             for (ReportD7 val : ReportD7.values()) {

@@ -45,11 +45,11 @@ public class StatisticsMapperD7Test {
     @Test
     @DisplayName("Mapping should consider summary as last row to map")
     public void shouldConsiderSummaryAsLastRow() {
-        final TimeSeriesPoint mapped = mapper.mapD7(singletonList(createKontaktregisterField("Sum:", "2345")), now());
+        final TimeSeriesPoint mapped = mapper.mapD7(singletonList(createKontaktregisterField("Sum:", "", "", "2345")), now());
         final Measurement result = mapped.getMeasurements().get(0);
 
         assertAll(
-                () -> assertEquals(ReportD7.D7_7.name(), result.getId()),
+                () -> assertEquals(ReportD7.D7_7.id(), result.getId()),
                 () -> assertEquals(2345L, result.getValue())
         );
     }
@@ -61,7 +61,7 @@ public class StatisticsMapperD7Test {
         final Measurement result = tsp.getMeasurements().get(0);
 
         assertAll(
-                () -> assertEquals(ReportD7.D7_3.name(), result.getId()),
+                () -> assertEquals(ReportD7.D7_3.id(), result.getId()),
                 () -> assertEquals(15L, result.getValue())
         );
     }
@@ -75,9 +75,9 @@ public class StatisticsMapperD7Test {
         final List<Measurement> result = tsp.getMeasurements();
 
         assertAll(
-                () -> assertEquals(ReportD7.D7_3.name(), result.get(0).getId()),
+                () -> assertEquals(ReportD7.D7_3.id(), result.get(0).getId()),
                 () -> assertEquals(15L, result.get(0).getValue()),
-                () -> assertEquals(ReportD7.D7_5.name(), result.get(1).getId()),
+                () -> assertEquals(ReportD7.D7_5.id(), result.get(1).getId()),
                 () -> assertEquals(88L, result.get(1).getValue())
         );
     }
@@ -88,16 +88,16 @@ public class StatisticsMapperD7Test {
         final TimeSeriesPoint tsp = mapper.mapD7(asList(
                         createValidKontaktregisterField(),
                         createKontaktregisterField("Aktive postbokser", "Digipost", "984661185", "88"),
-                        createKontaktregisterField("Sum:", "982")
+                        createKontaktregisterField("Sum:", "", "", "982")
                 ), now());
         final List<Measurement> result = tsp.getMeasurements();
 
         assertAll(
-                () -> assertEquals(ReportD7.D7_3.name(), result.get(0).getId()),
+                () -> assertEquals(ReportD7.D7_3.id(), result.get(0).getId()),
                 () -> assertEquals(15L, result.get(0).getValue()),
-                () -> assertEquals(ReportD7.D7_5.name(), result.get(1).getId()),
+                () -> assertEquals(ReportD7.D7_5.id(), result.get(1).getId()),
                 () -> assertEquals(88L, result.get(1).getValue()),
-                () -> assertEquals(ReportD7.D7_7.name(), result.get(2).getId()),
+                () -> assertEquals(ReportD7.D7_7.id(), result.get(2).getId()),
                 () -> assertEquals(982, result.get(2).getValue())
         );
     }
@@ -107,17 +107,17 @@ public class StatisticsMapperD7Test {
     public void shouldHandleThatSumIsInBetweenOtherPointsWhenMappingMultipleElements() {
         final TimeSeriesPoint tsp = mapper.mapD7(asList(
                         createValidKontaktregisterField(),
-                        createKontaktregisterField("Sum:", "982"),
+                        createKontaktregisterField("Sum:", "", "", "982"),
                         createKontaktregisterField("Aktive postbokser", "Digipost", "984661185", "88")
                 ), now());
         final List<Measurement> result = tsp.getMeasurements();
 
         assertAll(
-                () -> assertEquals(ReportD7.D7_3.name(), result.get(0).getId()),
+                () -> assertEquals(ReportD7.D7_3.id(), result.get(0).getId()),
                 () -> assertEquals(15L, result.get(0).getValue()),
-                () -> assertEquals(ReportD7.D7_7.name(), result.get(1).getId()),
+                () -> assertEquals(ReportD7.D7_7.id(), result.get(1).getId()),
                 () -> assertEquals(982, result.get(1).getValue()),
-                () -> assertEquals(ReportD7.D7_5.name(), result.get(2).getId()),
+                () -> assertEquals(ReportD7.D7_5.id(), result.get(2).getId()),
                 () -> assertEquals(88L, result.get(2).getValue())
         );
     }
@@ -127,12 +127,6 @@ public class StatisticsMapperD7Test {
     }
 
     private static KontaktregisterFields createKontaktregisterField(String... values) {
-        if (!values[values.length-2].equals("Sum:")) {
-            if ((values.length % 4) != 0) {
-                throw new IllegalArgumentException("Must be four values for each object");
-            }
-        }
-
         KontaktregisterFields field = new KontaktregisterFields();
         for (String value : values) {
             field.getValues().add(createKontaktregisterValue(value));

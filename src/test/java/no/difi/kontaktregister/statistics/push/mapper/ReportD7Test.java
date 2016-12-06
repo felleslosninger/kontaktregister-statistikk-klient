@@ -31,4 +31,10 @@ public class ReportD7Test {
     public void shouldMapToValueWhenStringComparisonValueForEnumIsFound() {
         assertEquals(ReportD7.D7_4, ReportD7.fromString("Aktive postbokser958935420"));
     }
+
+    @Test
+    @DisplayName("Should map id to name lowercase")
+    public void shouldMapToLowercaseWhenId() {
+        assertEquals(ReportD7.D7_6.id(), "d7_6");
+    }
 }

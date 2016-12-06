@@ -47,7 +47,7 @@ public class StatisticsMapperD5Test {
         final TimeSeriesPoint result = mapper.mapD5(singletonList(createaValidKontaktregisterField()), now());
 
         assertAll(
-                () -> assertEquals(ReportD5.D5_9.name(), result.getMeasurements().get(0).getId()),
+                () -> assertEquals(ReportD5.D5_9.id(), result.getMeasurements().get(0).getId()),
                 () -> assertEquals(88L, result.getMeasurements().get(0).getValue())
         );
     }
@@ -61,11 +61,11 @@ public class StatisticsMapperD5Test {
                 createKontaktregisterFields("Aktive brukere med mobil", "91")), now());
 
         assertAll(
-                () -> assertEquals(ReportD5.D5_9.name(), result.getMeasurements().get(0).getId()),
+                () -> assertEquals(ReportD5.D5_9.id(), result.getMeasurements().get(0).getId()),
                 () -> assertEquals(88L, result.getMeasurements().get(0).getValue()),
-                () -> assertEquals(ReportD5.D5_6.name(), result.getMeasurements().get(1).getId()),
+                () -> assertEquals(ReportD5.D5_6.id(), result.getMeasurements().get(1).getId()),
                 () -> assertEquals(72L, result.getMeasurements().get(1).getValue()),
-                () -> assertEquals(ReportD5.D5_2.name(), result.getMeasurements().get(2).getId()),
+                () -> assertEquals(ReportD5.D5_2.id(), result.getMeasurements().get(2).getId()),
                 () -> assertEquals(91L, result.getMeasurements().get(2).getValue())
         );
     }

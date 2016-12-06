@@ -18,12 +18,14 @@ public class StatisticsMapper {
         for (KontaktregisterFields field : fields) {
             try {
                 measurements.add(new Measurement(
-                        ReportD5.fromString(field.getValues().get(0).getValue()).name(),
+                        ReportD5.fromString(field.getValues().get(0).getValue()).id(),
                         new Long(field.getValues().get(1).getValue())));
             } catch (ReportEnumNotFound r) {
                 throw new MapperError(format("Failed mapping on %s", field.getValues()), r);
             } catch (NumberFormatException n) {
                 throw new MapperError("Value is not a number ", n);
+            } catch (IndexOutOfBoundsException i) {
+                throw new MapperError(String.format("No data to map from %d elements", fields.size()), i);
             }
         }
         return TimeSeriesPoint.builder()
@@ -38,25 +40,18 @@ public class StatisticsMapper {
         List<Measurement> measurements = new ArrayList<>();
         for (KontaktregisterFields field : fields) {
             try {
-                ReportD7 id;
-                Long value;
-                if (!field.getValues().get(0).getValue().equals(ReportD7.D7_7.mapVal())) {
-                    id = ReportD7.fromString(
+                ReportD7 id = ReportD7.fromString(
                             field.getValues().get(0).getValue() +
                                     field.getValues().get(1).getValue() +
-                                    field.getValues().get(2).getValue()
-                    );
-                    value = new Long(field.getValues().get(3).getValue());
-                } else {
-                    id = ReportD7.fromString(field.getValues().get(0).getValue());
-                    value = new Long(field.getValues().get(1).getValue());
-                }
+                                    field.getValues().get(2).getValue());
 
-                measurements.add(new Measurement(id.name(), value));
+                measurements.add(new Measurement(id.id(), new Long(field.getValues().get(3).getValue())));
             } catch (ReportEnumNotFound r) {
                 throw new MapperError(format("Failed mapping on %s", field.getValues()), r);
             } catch (NumberFormatException n) {
                 throw new MapperError("Value is not a number ", n);
+            } catch (IndexOutOfBoundsException i) {
+                throw new MapperError(String.format("No data to map from %d elements", fields.size()), i);
             }
         }
         return TimeSeriesPoint.builder()

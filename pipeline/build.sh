@@ -2,7 +2,6 @@
 
 verify() {
     mvn clean verify || exit 1
-
 }
 
 deliver() {

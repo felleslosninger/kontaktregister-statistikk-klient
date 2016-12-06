@@ -16,8 +16,9 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 @Configuration
 public class Config {
-    private static final String OWNER = "991825827";
-    private static final String BASE_URL = "http://eid-test-docker.dmz.local";
+    private static final String owner = "991825827";
+    private static final String base_url = "https://test-statistikk-inndata.difi.no";
+    private static final String password = "K.b4f=3Bf~ge{$-rDp]p";
 
     @Bean
     public KontaktregisterScheduler kontaktregisterScheduler() {
@@ -41,7 +42,7 @@ public class Config {
 
     @Bean
     public IngestClient ingestClient() {
-        return new IngestClient(BASE_URL, OWNER, OWNER, "^_=6BTx0Z_4%aO,eUU4x");
+        return new IngestClient(base_url, owner, owner, password);
     }
 
     @Bean
