@@ -1,3 +1,4 @@
+feature/PBLEID-12050: Som produkteier ønsker jeg at øyeblikksbildet blir oppdatert hver time i statistikkdatabasen
 feature/PBLEID-13048: Pipeline til test
 feature/PBLEID-12049 Hente data fra kontaktregister og legge inn i statistikkløsningen
 feature/PBLEID-12767 Bygg av applikasjonen på Jenkins med push til Dockerhub fra master-branch

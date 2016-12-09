@@ -40,7 +40,6 @@ public class KontaktregisterFetchTest {
     @Nested
     @DisplayName("When reading from report D5")
     class ReportD5 {
-        @Disabled("Will fail when systest url")
         @Test
         @DisplayName("Media-type is not application/json, fail with RestClientException")
         public void shouldGetRestClientExceptionWhenWrongMediatype() {
@@ -52,7 +51,6 @@ public class KontaktregisterFetchTest {
 
         }
 
-        @Disabled("Will fail when systest url")
         @Test
         @DisplayName("Got data from D5")
         public void shouldRetrieveDataWhenRequestingReportOnSpesificTime() {
@@ -72,7 +70,6 @@ public class KontaktregisterFetchTest {
     @Nested
     @DisplayName("When reading from report D7")
     class ReportD7 {
-        @Disabled("Will fail when systest url")
         @Test
         @DisplayName("Media-type is not application/json, fail with RestClientException")
         public void shouldGetRestClientExceptionWhenWrongMediatype() {
@@ -83,7 +80,6 @@ public class KontaktregisterFetchTest {
             assertThrows(RestClientException.class, () -> service.perform(D7.getId(), currentTime.atZone(ZoneId.systemDefault())));
         }
 
-        @Disabled("Will fail when systest url")
         @Test
         @DisplayName("Got data from D7")
         public void shouldRetrieveDataWhenRequestingReportOnSpesificTime() {

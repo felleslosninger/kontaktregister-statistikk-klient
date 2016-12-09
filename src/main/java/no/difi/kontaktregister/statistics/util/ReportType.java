@@ -3,8 +3,8 @@ package no.difi.kontaktregister.statistics.util;
 import static java.lang.String.format;
 
 public enum ReportType {
-    D5("d5", "Digital Postkasse", "digitalpostkasse"),
-    D7("d7", "Kontakt- og reservasjonsregisteret", "kontaktogreservasjon");
+    D5("d5", "Kontakt- og reservasjonsregisteret", "kontaktogreservasjon"),
+    D7("d7", "Digital Postkasse", "digitalpostkasse");
 
     private final String id;
     private final String name;

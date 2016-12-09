@@ -1,11 +1,11 @@
 package no.difi.kontaktregister.statistics.push.mapper;
 
-public class MapperError extends RuntimeException {
-    public MapperError(String message) {
+class MapperError extends RuntimeException {
+    MapperError(String message) {
         super(message);
     }
 
-    public MapperError(String message, Throwable exception) {
+    MapperError(String message, Throwable exception) {
         super(message, exception);
     }
 }

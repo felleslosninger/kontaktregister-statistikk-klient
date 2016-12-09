@@ -18,7 +18,9 @@ import org.springframework.web.client.RestTemplate;
 public class Config {
     private static final String owner = "991825827";
     private static final String base_url = "https://test-statistikk-inndata.difi.no";
-    private static final String password = "K.b4f=3Bf~ge{$-rDp]p";
+    private static final String password = "m-/Ry8:xb:As%AkGw{ON";
+    private static final int readTimeout = 5000;
+    private static final int connTimeout = 15000;
 
     @Bean
     public KontaktregisterScheduler kontaktregisterScheduler() {
@@ -42,7 +44,7 @@ public class Config {
 
     @Bean
     public IngestClient ingestClient() {
-        return new IngestClient(base_url, owner, owner, password);
+        return new IngestClient(base_url, readTimeout, connTimeout, owner, owner, password);
     }
 
     @Bean

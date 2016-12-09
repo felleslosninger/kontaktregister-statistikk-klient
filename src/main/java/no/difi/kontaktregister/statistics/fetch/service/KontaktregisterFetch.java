@@ -13,8 +13,8 @@ public class KontaktregisterFetch {
     }
 
     public KontaktregisterFields[] perform(String report, ZonedDateTime dateTime) {
-        final String urlTemplate = "http://eid-systest-admin01.dmz.local:10006/idporten-admin/statistics/statistics/json/{report}/{year}/{month}/{day}/{hour}";
-//        final String urlTemplate = "https://admin-test1.difi.eon.no/idporten-admin/statistics/statistics/json/{report}/{year}/{month}/{day}/{hour}";
+//        final String urlTemplate = "http://eid-systest-admin01.dmz.local:10006/idporten-admin/statistics/statistics/json/{report}/{year}/{month}/{day}/{hour}";
+        final String urlTemplate = "https://admin-test1.difi.eon.no/idporten-admin/statistics/statistics/json/{report}/{year}/{month}/{day}/{hour}";
         return restTemplate.getForObject(
                 urlTemplate,
                 KontaktregisterFields[].class, report, dateTime.getYear(), dateTime.getMonthValue(), dateTime.getDayOfMonth(), dateTime.getHour()
