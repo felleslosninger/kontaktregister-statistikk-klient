@@ -20,6 +20,7 @@ import static no.difi.kontaktregister.statistics.util.ReportType.D7;
 
 public class KontaktregisterScheduler {
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final String cron_one_minute_interval = "0 */1 * * * *";
     private static final String cron_five_minutes_past_every_hour = "0 5 * * * *";
     private static final String cron_seven_minutes_past_every_hour = "0 7 * * * *";
 

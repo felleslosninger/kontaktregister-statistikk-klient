@@ -31,7 +31,7 @@ image() {
     version=${2-'latest'}
     requireArgument 'service'
     case "${service}" in
-        "kontaktregister_statistikk")
+        "kontaktregister-statistikk")
             image="difi/kontaktregister-statistikk-klient:${version}"
             ;;
         *)
@@ -42,8 +42,12 @@ image() {
 
 createService() {
     service=$1
-    version=${2-'latest'}
+    kontaktregisterurl=${2}
+    statistikkurl=${3}
+    version=${4-'latest'}
     requireArgument 'service'
+    requireArgument 'kontaktregisterurl'
+    requireArgument 'statistikkurl'
     network='statistics'
     echo -n "Creating service ${service} of version ${version}... "
     image=$(image ${service} ${version})
@@ -55,27 +59,27 @@ createService() {
             --replicas 1 \
             --name ${service} \
             -p 8084:8080 \
-            ${image}) \
-            || fail "Failed to create service ${service}"
+            ${image} \
+            --url.base.kontaktregister=${kontaktregisterurl} \
+            --url.base.statistikk=${statistikkurl} \
+            ) || fail "Failed to create service ${service}"
         ;;
     esac
-
-    if [ $? -eq 0 ]
-    then
-      fail "Failed creating service ${version}"
-    else
-      ok
-    fi
 }
 
 updateService() {
     service=$1
-    version=${2-'latest'}
+    kontaktregisterurl=${2}
+    statistikkurl=${3}
+    version=${4-'latest'}
     requireArgument 'service'
+    requireArgument 'kontaktregisterurl'
+    requireArgument 'statistikkurl'
     echo -n "Updating service ${service} to version ${version}... "
     image=$(image ${service} ${version})
-    output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${version}; return; }
-    output=$(sudo docker service update --image ${image} ${service}) \
+    output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkurl} ${version} ; return; }
+    output=$(sudo docker service update ${service} \
+            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl}" ) \
         && ok || fail
     verify ${version} || return $?
 }
@@ -115,7 +119,7 @@ isServiceAvailable() {
     requireArgument 'service'
     host=${2-'localhost'}
     case "${service}" in
-        'kontaktregister_statistikk')
+        'kontaktregister-statistikk')
             url="http://${host}:8084"
             ;;
         *)
@@ -126,15 +130,19 @@ isServiceAvailable() {
 }
 
 update() {
-    version=${1-'latest'}
+    kontaktregisterurl=${1}
+    statistikkurl=${2}
+    version=${3-'latest'}
+    requireArgument 'kontaktregisterurl'
+    requireArgument 'statistikkurl'
     echo "Updating application to version ${version}..."
-    updateService 'kontaktregister_statistikk' ${version} || return $?
+    updateService 'kontaktregister-statistikk' ${kontaktregisterurl} ${statistikkurl} ${version} || return $?
     echo "Application updated"
 }
 
 delete() {
     echo "Deleting application..."
-    deleteService "kontaktregister_statistikk"
+    deleteService "kontaktregister-statistikk"
     echo "Application deleted"
 }
 
@@ -146,7 +154,7 @@ createAndVerify() {
 
 verify() {
     version=${1-'latest'}
-    waitForServiceToBeAvailable 'kontaktregister_statistikk' || return $?
+    waitForServiceToBeAvailable 'kontaktregister-statistikk' || return $?
 }
 
 case "${1}" in *)

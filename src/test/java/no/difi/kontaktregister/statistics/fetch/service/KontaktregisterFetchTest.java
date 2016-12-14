@@ -7,18 +7,18 @@ import no.difi.kontaktregister.statistics.context.SpringExtension;
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterFields;
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
 import no.difi.kontaktregister.statistics.util.ReportType;
-import org.junit.Ignore;
-import org.junit.internal.builders.JUnit3Builder;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.swing.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Application.class, Config.class})
+@SpringBootTest({"url.base.kontaktregister=http://admin-test1.difi.eon.no", "url.base.statistikk=http://test-statistikk-inndata.difi.no"})
 @DisplayName("Reading kontaktregister data")
 public class KontaktregisterFetchTest {
     @Autowired
