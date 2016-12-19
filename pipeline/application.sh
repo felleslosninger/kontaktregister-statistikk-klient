@@ -44,10 +44,12 @@ createService() {
     service=$1
     kontaktregisterurl=${2}
     statistikkurl=${3}
-    version=${4-'latest'}
+    hemmelighet=${4}
+    version=${5-'latest'}
     requireArgument 'service'
     requireArgument 'kontaktregisterurl'
     requireArgument 'statistikkurl'
+    requireArgument 'hemmelighet'
     network='statistics'
     echo -n "Creating service ${service} of version ${version}... "
     image=$(image ${service} ${version})
@@ -62,6 +64,7 @@ createService() {
             ${image} \
             --url.base.kontaktregister=${kontaktregisterurl} \
             --url.base.statistikk=${statistikkurl} \
+            --file.base.difi-statistikk=${hemmelighet}
             ) || fail "Failed to create service ${service}"
         ;;
     esac
@@ -71,15 +74,17 @@ updateService() {
     service=$1
     kontaktregisterurl=${2}
     statistikkurl=${3}
-    version=${4-'latest'}
+    hemmelighet=${4}
+    version=${5-'latest'}
     requireArgument 'service'
     requireArgument 'kontaktregisterurl'
     requireArgument 'statistikkurl'
+    requireArgument 'hemmelighet'
     echo -n "Updating service ${service} to version ${version}... "
     image=$(image ${service} ${version})
-    output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkurl} ${version} ; return; }
+    output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkurl} ${hemmelighet} ${version} ; return; }
     output=$(sudo docker service update ${service} \
-            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl}" ) \
+            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl} --file.base.difi-statistikk=${hemmelighet}" ) \
         && ok || fail
     verify ${version} || return $?
 }
@@ -132,11 +137,13 @@ isServiceAvailable() {
 update() {
     kontaktregisterurl=${1}
     statistikkurl=${2}
-    version=${3-'latest'}
+    hemmelighet=${3}
+    version=${4-'latest'}
     requireArgument 'kontaktregisterurl'
     requireArgument 'statistikkurl'
+    requireArgument 'hemmelighet'
     echo "Updating application to version ${version}..."
-    updateService 'kontaktregister-statistikk' ${kontaktregisterurl} ${statistikkurl} ${version} || return $?
+    updateService 'kontaktregister-statistikk' ${kontaktregisterurl} ${statistikkurl} ${hemmelighet} ${version} || return $?
     echo "Application updated"
 }
 

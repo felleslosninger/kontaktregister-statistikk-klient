@@ -32,8 +32,9 @@ public class Config {
         try {
             new URL(environment.getRequiredProperty("url.base.kontaktregister"));
             new URL(environment.getRequiredProperty("url.base.statistikk"));
+            environment.getRequiredProperty("file.base.difi-statistikk");
         } catch (IllegalStateException e) {
-            throw new ArgumentMissing("Missing argument. url.base.kontaktregister and url.base.url.base.statistikk is required", e);
+            throw new ArgumentMissing("One or more of the required arguments is missing. Check with documentation which are required.", e);
         } catch (MalformedURLException e) {
             throw new ArgumentMissing("url.base.kontaktregister and/or url.base.url.base.statistikk not valid URL", e);
         }
@@ -61,6 +62,7 @@ public class Config {
 
     @Bean
     public IngestClient ingestClient() {
+
         return new IngestClient(base_url, readTimeout, connTimeout, owner, owner, password);
     }
 

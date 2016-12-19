@@ -35,13 +35,14 @@ if (isDeployBuild()) {
             sh "ssh 'eid-test-docker01.dmz.local' bash -s -- < pipeline/application.sh update \
                 http://admin-test1.difi.eon.no \
                 http://test-statistikk-inndata.difi.no \
+                krr-stat-pumba \
                 ${version}"
         }
     }
 }
 
 boolean isDeployBuild() {
-    return env.BRANCH_NAME.matches('master')
+    return env.BRANCH_NAME.matches('feature/PBLEID-13038')
 }
 
 String readChange() {
