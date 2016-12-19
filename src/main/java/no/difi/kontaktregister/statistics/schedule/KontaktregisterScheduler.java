@@ -1,6 +1,6 @@
 package no.difi.kontaktregister.statistics.schedule;
 
-import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterFields;
+import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
 import no.difi.kontaktregister.statistics.fetch.service.KontaktregisterFetch;
 import no.difi.kontaktregister.statistics.push.mapper.StatisticsMapper;
 import no.difi.kontaktregister.statistics.push.service.KontaktregisterPush;
@@ -11,18 +11,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static no.difi.kontaktregister.statistics.util.ReportType.D5;
-import static no.difi.kontaktregister.statistics.util.ReportType.D7;
+import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D5;
+import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D7;
+import static no.difi.kontaktregister.statistics.util.StatisticsReportType.*;
 
 public class KontaktregisterScheduler {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final String cron_one_minute_interval = "0 */1 * * * *";
-    private static final String cron_five_minutes_past_every_hour = "0 5 * * * *";
-    private static final String cron_seven_minutes_past_every_hour = "0 7 * * * *";
+    private static final String cron_ten_minutes_past_every_hour = "0 10 * * * *";
 
     private final KontaktregisterFetch kontaktregisterFetch;
     private final KontaktregisterPush kontaktregisterPush;
@@ -35,54 +36,36 @@ public class KontaktregisterScheduler {
     }
 
     /***
-     * Rapport D5: Øyeblikksstatus for kontakt- og reservasjonsregisteret
+     * Rapport D5: Øyeblikksstatus fra Kontakt- og Reservasjonsregisteret
      */
-    @Scheduled(cron = cron_five_minutes_past_every_hour)
-    public void fetchKontaktregisterD5Report() {
+    @Scheduled(cron = cron_ten_minutes_past_every_hour)
+    public void fetchKontaktregisterReportData() {
         //TODO: Retrieve last inserted datapoint from statistics.
         final ZonedDateTime startTime = ZonedDateTime.now();
-        logger.info(format("%s Starting fetch at %s", D5.getNameWithBracket(), startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+        logger.info(format("Starting fetch from %s %s at %s", D5.getNameWithBracket(), D5.getNameWithBracket(), startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
 
         ZonedDateTime reportTime = startTime.minusHours(1);
-        final List<KontaktregisterFields> fields = asList(kontaktregisterFetch.perform(D5.getId(), reportTime));
+        final List<KontaktregisterField> d5Report = asList(kontaktregisterFetch.perform(D5.getId(), reportTime));
+        final List<KontaktregisterField> d7Report = asList(kontaktregisterFetch.perform(D7.getId(), reportTime));
 
-        logger.info(format("%s Starting insert at %s", D5.getNameWithBracket(), ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-        if (fields.size() == 0 || fields.get(0).getValues().size() == 0) {
-            logger.info("No data in KRR, nothing to do");
+        if (!hasReportData(d5Report, d7Report)) {
+            logger.info("No data from KRR, nothing to do");
         }
         else {
-            final TimeSeriesPoint point = statisticsMapper.mapD5(fields, startTime);
-            kontaktregisterPush.perform(D5.getSerieId(), point);
+            List<KontaktregisterField> fields = new ArrayList<>();
+            fields.addAll(d5Report);
+            fields.addAll(d7Report);
+
+            final TimeSeriesPoint datapoint = statisticsMapper.map(fields, startTime);
+            kontaktregisterPush.perform(kontaktregister.getStatisticId(), datapoint);
         }
 
         final ZonedDateTime endTime = ZonedDateTime.now();
-        logger.info(format("%s Finish data transfer at %s", D5.getNameWithBracket(), endTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-        logger.info(format("It took me %d seconds", ((endTime.toInstant().toEpochMilli() - startTime.toInstant().toEpochMilli()) / 1000)));
+        logger.info(format("Finish data transfer to %s at %s", kontaktregister.getIdWithBracket(), endTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
+        logger.info(format("It took me %d milliseconds", ((endTime.toInstant().toEpochMilli() - startTime.toInstant().toEpochMilli()))));
     }
 
-    /***
-     * Rapport D7: Øyeblikksstatus for Digital Postkasse
-     */
-    @Scheduled(cron = cron_seven_minutes_past_every_hour)
-    public void fetchKontaktregisterD7Report() {
-        //TODO: Retrieve last inserted datapoint from statistics.
-        final ZonedDateTime startTime = ZonedDateTime.now();
-        logger.info(format("%s Starting fetch at %s", D7.getNameWithBracket(), startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-
-        ZonedDateTime reportTime = startTime.minusHours(1);
-        final List<KontaktregisterFields> fields = asList(kontaktregisterFetch.perform(D7.getId(), reportTime));
-
-        logger.info(format("%s Starting insert at %s", D7.getNameWithBracket(), ZonedDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-        if (fields.size() == 0 || fields.get(0).getValues().size() == 0) {
-            logger.info("No data in KRR, nothing to do");
-        }
-        else {
-            final TimeSeriesPoint point = statisticsMapper.mapD7(fields, startTime);
-            kontaktregisterPush.perform(D7.getSerieId(), point);
-        }
-
-        final ZonedDateTime endTime = ZonedDateTime.now();
-        logger.info(format("%s Finish data transfer at %s", D7.getNameWithBracket(), endTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
-        logger.info(format("It took me %d seconds", ((endTime.toInstant().toEpochMilli() - startTime.toInstant().toEpochMilli()) / 1000)));
+    private boolean hasReportData(List<KontaktregisterField> d5Report, List<KontaktregisterField> d7Report) {
+        return !(d5Report == null || d5Report.size() == 0) & !(d7Report == null || d7Report.size() == 0);
     }
 }

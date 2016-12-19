@@ -2,7 +2,7 @@ package no.difi.kontaktregister.statistics.push.service;
 
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
-import no.difi.kontaktregister.statistics.IngestClientMock;
+import no.difi.kontaktregister.statistics.testutils.IngestClientMock;
 import no.difi.statistics.ingest.client.Distance;
 import no.difi.statistics.ingest.client.IngestClient;
 import no.difi.statistics.ingest.client.model.Measurement;
@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 
-import static no.difi.kontaktregister.statistics.IngestClientMock.existing_datapoint;
-import static no.difi.kontaktregister.statistics.IngestClientMock.unauthorized;
+import static no.difi.kontaktregister.statistics.testutils.IngestClientMock.existing_datapoint;
+import static no.difi.kontaktregister.statistics.testutils.IngestClientMock.unauthorized;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.argThat;

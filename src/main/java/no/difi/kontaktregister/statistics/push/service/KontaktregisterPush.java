@@ -21,7 +21,7 @@ public class KontaktregisterPush {
         this.ingestClient = ingestClient;
     }
 
-    public void perform(String seriesName, TimeSeriesPoint timeSeriesPoint) {
+    public boolean perform(String seriesName, TimeSeriesPoint timeSeriesPoint) {
         try {
             ingestClient.ingest(seriesName, Distance.hour, timeSeriesPoint);
         } catch (DataPointAlreadyExists e) {
@@ -35,5 +35,6 @@ public class KontaktregisterPush {
         } catch (IngestFailed e) {
             logger.error("Something failed when I tried to push data (my \"M$\" message)", e);
         }
+        return true;
     }
 }

@@ -21,10 +21,19 @@ Applikasjonen kan nå startes enten på localhost eller i en docker-container.
 
 ##Bygging og utrulling
 Prosjektet leverer Java jar applikasjon pakket inn i Docker-bildet.
+
+Applikasjonen benytter to påkrevde parametre for å angi URL til kontaktregisteret og statistikkaplikasjonen:
+`url.base.kontaktregister`
+`url.base.url.base.statistikk`
+
 Etter bygg kan applikasjonen startes med
 
 **localhost**
-`java -jar ./target/ krr-statistikk-klient*.jar`
+`java -jar ./target/ krr-statistikk-klient*.jar \
+  --url.base.kontaktregister=http://admin-test1.difi.eon.no \
+  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no`
 
 **Docker**
-`mvn docker:run`
+`mvn docker:run \
+  --url.base.kontaktregister=http://admin-test1.difi.eon.no \
+  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no`

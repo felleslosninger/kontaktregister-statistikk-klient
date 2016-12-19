@@ -1,4 +1,4 @@
-package no.difi.kontaktregister.statistics;
+package no.difi.kontaktregister.statistics.testutils;
 
 import no.difi.statistics.ingest.client.Distance;
 import no.difi.statistics.ingest.client.IngestClient;

@@ -1,4 +1,4 @@
-package no.difi.kontaktregister.statistics;
+package no.difi.kontaktregister.statistics.testutils;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;

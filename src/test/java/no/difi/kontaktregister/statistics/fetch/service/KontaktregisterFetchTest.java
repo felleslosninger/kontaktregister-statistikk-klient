@@ -1,12 +1,12 @@
 package no.difi.kontaktregister.statistics.fetch.service;
 
-import no.difi.kontaktregister.statistics.RestServiceMockFactory;
+import no.difi.kontaktregister.statistics.testutils.RestServiceMockFactory;
 import no.difi.kontaktregister.statistics.configuration.Application;
 import no.difi.kontaktregister.statistics.configuration.Config;
 import no.difi.kontaktregister.statistics.context.SpringExtension;
-import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterFields;
+import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
-import no.difi.kontaktregister.statistics.util.ReportType;
+import no.difi.kontaktregister.statistics.util.KontaktregisterReportType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
-import static no.difi.kontaktregister.statistics.util.ReportType.D5;
-import static no.difi.kontaktregister.statistics.util.ReportType.D7;
+import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D5;
+import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D7;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -59,7 +59,7 @@ public class KontaktregisterFetchTest {
 
             MockRestServiceServer server = createMockRestServiceServer(currentTime, MediaType.APPLICATION_JSON, D5);
 
-            KontaktregisterFields[] consumer = service.perform(D5.getId(), currentTime.atZone(ZoneId.systemDefault()));
+            KontaktregisterField[] consumer = service.perform(D5.getId(), currentTime.atZone(ZoneId.systemDefault()));
             List<KontaktregisterValue> field = consumer[0].getValues();
 
             server.verify();
@@ -88,7 +88,7 @@ public class KontaktregisterFetchTest {
 
             MockRestServiceServer server = createMockRestServiceServer(currentTime, MediaType.APPLICATION_JSON, D7);
 
-            KontaktregisterFields[] consumer = service.perform(D7.getId(), currentTime.atZone(ZoneId.systemDefault()));
+            KontaktregisterField[] consumer = service.perform(D7.getId(), currentTime.atZone(ZoneId.systemDefault()));
             List<KontaktregisterValue> field = consumer[0].getValues();
 
             server.verify();
@@ -97,7 +97,7 @@ public class KontaktregisterFetchTest {
         }
     }
 
-    private MockRestServiceServer createMockRestServiceServer(LocalDateTime dateTime, MediaType mediaType, ReportType report) {
+    private MockRestServiceServer createMockRestServiceServer(LocalDateTime dateTime, MediaType mediaType, KontaktregisterReportType report) {
         return RestServiceMockFactory.createMockRestServiceServer(
                 dateTime,
                 mediaType,
@@ -107,8 +107,8 @@ public class KontaktregisterFetchTest {
         );
     }
 
-    private static String expectedJson(ReportType report) {
-        if (report == ReportType.D5) {
+    private static String expectedJson(KontaktregisterReportType report) {
+        if (report == KontaktregisterReportType.D5) {
             return "[{\"fields\":[{\"value\":\"Aktive brukere med e-post\"},{\"value\":20080}]}]";
         }
         else { //D7

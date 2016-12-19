@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class KontaktregisterFields {
+public class KontaktregisterField {
     @JsonProperty("fields")
-    List<KontaktregisterValue> values;
+    private List<KontaktregisterValue> values;
 
     public List<KontaktregisterValue> getValues() {
         if (values == null) {

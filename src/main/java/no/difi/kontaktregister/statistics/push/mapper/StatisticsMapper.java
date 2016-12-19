@@ -1,66 +1,66 @@
 package no.difi.kontaktregister.statistics.push.mapper;
 
-import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterFields;
+import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
+import no.difi.kontaktregister.statistics.util.NameTranslateDefinitions;
 import no.difi.statistics.ingest.client.model.Measurement;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.String.format;
 
 public class StatisticsMapper {
-    public TimeSeriesPoint mapD5(List<KontaktregisterFields> fields, ZonedDateTime time) {
+    public TimeSeriesPoint map(List<KontaktregisterField> fields, ZonedDateTime time) {
         validate(fields);
+        List<Measurement> measurements = mapMeasurements(fields);
 
-        List<Measurement> measurements = new ArrayList<>();
-        for (KontaktregisterFields field : fields) {
-            try {
-                measurements.add(new Measurement(
-                        ReportD5.fromString(field.getValues().get(0).getValue()).id(),
-                        new Long(field.getValues().get(1).getValue())));
-            } catch (ReportEnumNotFound r) {
-                throw new MapperError(format("Failed mapping on %s", field.getValues()), r);
-            } catch (NumberFormatException n) {
-                throw new MapperError("Value is not a number ", n);
-            } catch (IndexOutOfBoundsException i) {
-                throw new MapperError(String.format("No data to map from %d elements", fields.size()), i);
-            }
-        }
         return TimeSeriesPoint.builder()
                 .timestamp(time)
                 .measurements(measurements)
                 .build();
     }
 
-    public TimeSeriesPoint mapD7(List<KontaktregisterFields> fields, ZonedDateTime time) {
-        validate(fields);
-
+    private List<Measurement> mapMeasurements(List<KontaktregisterField> fields) {
         List<Measurement> measurements = new ArrayList<>();
-        for (KontaktregisterFields field : fields) {
-            try {
-                ReportD7 id = ReportD7.fromString(
-                            field.getValues().get(0).getValue() +
-                                    field.getValues().get(1).getValue() +
-                                    field.getValues().get(2).getValue());
+        Long p5p6 = 0L;
+        boolean joinedIdForRegisteredUsersWithCellOrEmail = false;
 
-                measurements.add(new Measurement(id.id(), new Long(field.getValues().get(3).getValue())));
-            } catch (ReportEnumNotFound r) {
-                throw new MapperError(format("Failed mapping on %s", field.getValues()), r);
-            } catch (NumberFormatException n) {
-                throw new MapperError("Value is not a number ", n);
-            } catch (IndexOutOfBoundsException i) {
-                throw new MapperError(String.format("No data to map from %d elements", fields.size()), i);
+        for (KontaktregisterField field : fields) {
+            final String id = joinFieldsForId(field);
+
+            final NameTranslateDefinitions ro = NameTranslateDefinitions.find(id);
+            if (ro != null) {
+                if (isPartIdOfRegisteredUsersWithCellOrEmail(ro)) {
+                    joinedIdForRegisteredUsersWithCellOrEmail = true;
+                    p5p6 = p5p6 + new Long(field.getValues().get(field.getValues().size() - 1).getValue());
+                }
+                else {
+                    measurements.add(new Measurement(
+                            ro.getStatisticId(),
+                            new Long(field.getValues().get(field.getValues().size() - 1).getValue())));
+                }
             }
         }
-        return TimeSeriesPoint.builder()
-                .timestamp(time)
-                .measurements(measurements)
-                .build();
+        if (joinedIdForRegisteredUsersWithCellOrEmail) {
+            measurements.add(new Measurement(NameTranslateDefinitions.D5_5_6.getStatisticId(), p5p6));
+        }
+        return measurements;
     }
 
-    private void validate(List<KontaktregisterFields> fields) {
+    private boolean isPartIdOfRegisteredUsersWithCellOrEmail(NameTranslateDefinitions ro) {
+        return ro == NameTranslateDefinitions.D5_5 || ro == NameTranslateDefinitions.D5_6;
+    }
+
+    private String joinFieldsForId(KontaktregisterField field) {
+        StringJoiner fieldId = new StringJoiner("");
+        for (int i = 0; i < field.getValues().size() - 1; i++) {
+            fieldId.add(field.getValues().get(i).getValue());
+        }
+        return fieldId.toString();
+    }
+
+    private void validate(List<KontaktregisterField> fields) {
         if (fields == null) {
             throw new MapperError("Point is missing");
         }
