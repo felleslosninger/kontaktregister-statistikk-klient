@@ -57,7 +57,7 @@ public class KontaktregisterScheduler {
             fields.addAll(d7Report);
 
             final TimeSeriesPoint datapoint = statisticsMapper.map(fields, startTime);
-            kontaktregisterPush.perform(kontaktregister.getStatisticId(), datapoint);
+            kontaktregisterPush.perform(kontaktregister.seriesId(), datapoint);
         }
 
         final ZonedDateTime endTime = ZonedDateTime.now();

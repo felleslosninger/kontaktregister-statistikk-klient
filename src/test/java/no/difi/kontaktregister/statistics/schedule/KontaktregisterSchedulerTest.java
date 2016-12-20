@@ -105,7 +105,7 @@ public class KontaktregisterSchedulerTest {
         scheduler.fetchKontaktregisterReportData();
 
         verify(pushMock, times(1)).perform(sCaptor.capture(), tCaptor.capture());
-        assumingThat(sCaptor.getValue().equals(kontaktregister.getStatisticId()),
+        assumingThat(sCaptor.getValue().equals(kontaktregister.seriesId()),
                 () -> assertEquals(tCaptor.getValue().getMeasurements().size(), 3));
         assertAll(
                 () -> assertTrue(tCaptor.getValue().getMeasurements().get(0).equals(m0)),

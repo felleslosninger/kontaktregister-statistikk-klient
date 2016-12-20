@@ -3,18 +3,25 @@ package no.difi.kontaktregister.statistics.util;
 import static java.lang.String.format;
 
 public enum StatisticsReportType {
-    kontaktregister("kontaktogreservasjonsregister");
+    kontaktregister("kontaktogreservasjonsregister", "991825827");
 
-    private final String statisticId;
+    private final String seriesId;
+    private final String owner;
 
-    StatisticsReportType(String statisticId) {
-        this.statisticId = statisticId;
+    StatisticsReportType(String owner, String seriesId) {
+        this.owner = owner;
+        this.seriesId = seriesId;
     }
 
-    public String getStatisticId() {
-        return statisticId;
+    public String seriesId() {
+        return seriesId;
     }
+
+    public String owner() {
+        return owner;
+    }
+
     public String getIdWithBracket() {
-        return format("[%s]", statisticId);
+        return format("[%s]", seriesId);
     }
 }
