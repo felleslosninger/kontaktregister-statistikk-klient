@@ -22,17 +22,19 @@ import java.net.URL;
 @Configuration
 public class Config {
     private static final String owner = "991825827";
-    private static final String base_url = "https://test-statistikk-inndata.difi.no";
-    private static final String password = "q-^Z-FepFb>{%~p/Y42k";
     private static final int readTimeout = 5000;
     private static final int connTimeout = 15000;
+    private static String baseUrl;
+    private static String password;
 
     @Autowired
     public Config(Environment environment) {
         try {
+
+            password = environment.getRequiredProperty("file.base.difi-statistikk");
+            baseUrl = "url.base.statistikk";
             new URL(environment.getRequiredProperty("url.base.kontaktregister"));
-            new URL(environment.getRequiredProperty("url.base.statistikk"));
-            environment.getRequiredProperty("file.base.difi-statistikk");
+            new URL(environment.getRequiredProperty(baseUrl));
         } catch (IllegalStateException e) {
             throw new ArgumentMissing("One or more of the required arguments is missing. Check with documentation which are required.", e);
         } catch (MalformedURLException e) {
@@ -63,7 +65,7 @@ public class Config {
     @Bean
     public IngestClient ingestClient() {
 
-        return new IngestClient(base_url, readTimeout, connTimeout, owner, owner, password);
+        return new IngestClient(baseUrl, readTimeout, connTimeout, owner, owner, password);
     }
 
     @Bean

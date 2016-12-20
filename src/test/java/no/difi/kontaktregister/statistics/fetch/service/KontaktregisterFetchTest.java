@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest({
         "url.base.kontaktregister=http://admin-test1.difi.eon.no",
         "url.base.statistikk=http://test-statistikk-inndata.difi.no",
-        "path.base.difi-statistikk=krr-stat-poomba"})
+        "file.base.difi-statistikk=krr-stat-pumba"})
 @DisplayName("Reading kontaktregister data")
 public class KontaktregisterFetchTest {
     @Autowired

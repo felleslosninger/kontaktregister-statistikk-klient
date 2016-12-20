@@ -1,6 +1,8 @@
 package no.difi.kontaktregister.statistics.configuration;
 
-class ArgumentMissing extends RuntimeException {
+import no.difi.kontaktregister.statistics.exception.KontaktregisterStatisticsError;
+
+class ArgumentMissing extends KontaktregisterStatisticsError {
     ArgumentMissing(String message) {
         super(message);
     }
