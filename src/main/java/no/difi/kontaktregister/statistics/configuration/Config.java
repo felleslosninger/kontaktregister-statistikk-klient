@@ -23,7 +23,7 @@ import java.net.URL;
 public class Config {
     private static final String owner = "991825827";
     private static final String base_url = "https://test-statistikk-inndata.difi.no";
-    private static final String password = "m-/Ry8:xb:As%AkGw{ON";
+    private static final String password = "q-^Z-FepFb>{%~p/Y42k";
     private static final int readTimeout = 5000;
     private static final int connTimeout = 15000;
 
