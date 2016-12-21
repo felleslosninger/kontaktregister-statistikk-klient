@@ -46,11 +46,10 @@ public class KontaktregisterFetchTest {
     private KontaktregisterFetch service;
 
     private String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-    private String file;
 
     @BeforeEach
     public void setUp() throws IOException {
-        file = FileCreatorUtil.createPasswordFileAndPath("secret", basePath).getPath() + filepath + filename;
+        FileCreatorUtil.createPasswordFileAndPath("secret", basePath);
     }
 
     @AfterEach
