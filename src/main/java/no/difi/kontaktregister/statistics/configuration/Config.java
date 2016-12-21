@@ -33,7 +33,6 @@ public class Config {
     @Autowired
     public Config(Environment environment) {
         try {
-
             password = ReadSecret.getPwd(environment.getRequiredProperty("file.base.difi-statistikk"));
             baseUrl = "url.base.statistikk";
             new URL(environment.getRequiredProperty("url.base.kontaktregister"));

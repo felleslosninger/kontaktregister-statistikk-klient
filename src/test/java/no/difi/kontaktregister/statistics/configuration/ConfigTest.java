@@ -1,12 +1,20 @@
 package no.difi.kontaktregister.statistics.configuration;
 
+import no.difi.kontaktregister.statistics.testutils.FileCreatorUtil;
 import no.difi.kontaktregister.statistics.util.UtilError;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.core.env.Environment;
 
+import java.io.File;
+import java.io.IOException;
+
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.filename;
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.filepath;
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.firstPath;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -14,16 +22,26 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @DisplayName("When configuration is set up")
 public class ConfigTest {
-    private Config config;
-
     private static final String VALID_URL = "http://valid.url.no";
     private static final String INVALID_URL = "not.an.url";
+    private String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 
     @Mock private Environment environmentMock;
 
+    private String file;
+
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws IOException {
         initMocks(this);
+
+        file = FileCreatorUtil.createPasswordFileAndPath("secret", basePath).getPath() + filepath + filename;
+    }
+
+    @AfterEach
+    public void tearDown() throws IOException {
+        FileCreatorUtil.removeFile(basePath + filepath + filename);
+        FileCreatorUtil.removePath(basePath + filepath);
+        FileCreatorUtil.removePath(basePath + firstPath);
     }
 
     @Test
@@ -31,7 +49,7 @@ public class ConfigTest {
     public void shouldFailWhenUrlBaseKontaktregisterIsLackingInConfig() {
         when(environmentMock.getRequiredProperty("url.base.kontaktregister")).thenThrow(new IllegalStateException());
         when(environmentMock.getRequiredProperty("url.base.statistikk")).thenReturn(VALID_URL);
-        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn("something.else");
+        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn(file);
 
         assertThrows(ArgumentMissing.class, () -> new Config(environmentMock));
     }
@@ -41,7 +59,7 @@ public class ConfigTest {
     public void shouldFailWhenUrlBaseStatistikkIsLackingInConfig() {
         when(environmentMock.getRequiredProperty("url.base.kontaktregister")).thenReturn(VALID_URL);
         when(environmentMock.getRequiredProperty("url.base.statistikk")).thenThrow(new IllegalStateException());
-        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn("some.path");
+        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn(file);
 
         assertThrows(ArgumentMissing.class, () -> new Config(environmentMock));
     }
@@ -61,7 +79,7 @@ public class ConfigTest {
     public void shouldFailWhenUrlBaseKontaktregisterIsNotAValidUrl() {
         when(environmentMock.getRequiredProperty("url.base.kontaktregister")).thenReturn(INVALID_URL);
         when(environmentMock.getRequiredProperty("url.base.statistikk")).thenReturn(VALID_URL);
-        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn("some.path");
+        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn(file);
 
         assertThrows(ArgumentMissing.class, () -> new Config(environmentMock));
     }
@@ -71,7 +89,7 @@ public class ConfigTest {
     public void shouldFailWhenUrlBaseStatistikkIsNotAValidUrl() {
         when(environmentMock.getRequiredProperty("url.base.kontaktregister")).thenReturn(VALID_URL);
         when(environmentMock.getRequiredProperty("url.base.statistikk")).thenReturn(INVALID_URL);
-        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn("some.path");
+        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn(file);
 
         assertThrows(ArgumentMissing.class, () -> new Config(environmentMock));
     }
@@ -81,7 +99,7 @@ public class ConfigTest {
     public void shouldSucceedWhenParametersAreValid() {
         when(environmentMock.getRequiredProperty("url.base.kontaktregister")).thenReturn(VALID_URL);
         when(environmentMock.getRequiredProperty("url.base.statistikk")).thenReturn(VALID_URL);
-        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn("some.path");
+        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn(file);
 
         new Config(environmentMock);
     }

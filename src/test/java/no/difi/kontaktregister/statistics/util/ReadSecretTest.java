@@ -1,23 +1,20 @@
 package no.difi.kontaktregister.statistics.util;
 
-import org.junit.jupiter.api.*;
+import no.difi.kontaktregister.statistics.testutils.FileCreatorUtil;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.*;
 import static no.difi.kontaktregister.statistics.util.ReadSecret.getPwd;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("When fetching secret then")
 public class ReadSecretTest {
-
-    private final static String filename = "/krr-stat-pumba";
-    private final static String firstPath = "/run";
-    private final static String filepath = firstPath + "/secrets";
     private String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
 
     @Test
@@ -31,41 +28,15 @@ public class ReadSecretTest {
     public void shouldFindAndReturnSecretWhenAvailable() throws IOException {
         final String pwd = "someSecret";
 
-        final File file = createPasswordFileAndPath(pwd);
+        final File file = FileCreatorUtil.createPasswordFileAndPath(pwd, basePath);
 
         assertEquals(pwd, getPwd(file.getPath() + filepath + filename));
     }
 
     @AfterEach
     public void tearDown() throws IOException {
-        removeFile(filepath + filename);
-        removePath(filepath);
-        removePath(firstPath);
-    }
-
-    private File createPasswordFileAndPath(String pwd) throws IOException {
-        final File file = new File(basePath);
-        final Path path = Paths.get(file.getPath() + filepath);
-        final Path tempFile = Paths.get(file.getPath() + filepath + filename);
-        Files.createDirectories(path);
-        Files.createFile(tempFile);
-        Files.write(tempFile, pwd.getBytes());
-        return file;
-    }
-
-    private void removeFile(String filename) throws IOException {
-        final File file = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + filename);
-        final Path tempFile = Paths.get(file.getPath());
-        if (Files.exists(tempFile)) {
-            Files.delete(tempFile);
-        }
-    }
-
-    private void removePath(String pathTip) throws IOException {
-        final File path = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() + pathTip);
-        final Path tempPath = Paths.get(path.getPath());
-        if (Files.exists(tempPath) && Files.isDirectory(tempPath)) {
-            Files.delete(tempPath);
-        }
+        FileCreatorUtil.removeFile(basePath + filepath + filename);
+        FileCreatorUtil.removePath(basePath + filepath);
+        FileCreatorUtil.removePath(basePath + firstPath);
     }
 }

@@ -5,6 +5,7 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
+import no.difi.kontaktregister.statistics.testutils.FileCreatorUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -24,10 +25,15 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.util.Assert;
 
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.*;
+
 public class SpringExtension implements BeforeAllCallback, AfterAllCallback, TestInstancePostProcessor,
         BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     private static final Namespace namespace = Namespace.create(SpringExtension.class);
+
+    private final String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    private String file;
 
     @Override
     public void beforeAll(ContainerExtensionContext context) throws Exception {
@@ -45,6 +51,8 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
+        FileCreatorUtil.createPasswordFileAndPath("secret", basePath);
+
         getTestContextManager(context).prepareTestInstance(testInstance);
     }
 
