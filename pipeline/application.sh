@@ -64,7 +64,7 @@ createService() {
             ${image} \
             --url.base.kontaktregister=${kontaktregisterurl} \
             --url.base.statistikk=${statistikkurl} \
-            --file.base.difi-statistikk=${hemmelighet}
+            --file.base.difi-statistikk=/run/secrets${hemmelighet}
             ) || fail "Failed to create service ${service}"
         ;;
     esac
@@ -84,7 +84,7 @@ updateService() {
     image=$(image ${service} ${version})
     output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkurl} ${hemmelighet} ${version} ; return; }
     output=$(sudo docker service update ${service} \
-            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl} --file.base.difi-statistikk=${hemmelighet}" ) \
+            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl} --file.base.difi-statistikk=/run/secrets${hemmelighet}" ) \
         && ok || fail
     verify ${version} || return $?
 }

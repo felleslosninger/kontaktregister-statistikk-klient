@@ -36,6 +36,8 @@ public class Config {
             baseUrl = "url.base.statistikk";
             new URL(environment.getRequiredProperty("url.base.kontaktregister"));
             new URL(environment.getRequiredProperty(baseUrl));
+            //TODO: Remove line below with hardcoded passphrase when docker is updated to 1.13. Jira: PBLEID-13271
+            password = "fzYU7qQA}vF(A66l.y)7";
         } catch (IllegalStateException e) {
             throw new ArgumentMissing("One or more of the required arguments is missing. Check with documentation which are required.", e);
         } catch (MalformedURLException e) {

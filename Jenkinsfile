@@ -42,7 +42,7 @@ if (isDeployBuild()) {
 }
 
 boolean isDeployBuild() {
-    return env.BRANCH_NAME.matches('feature/PBLEID-13038')
+    return env.BRANCH_NAME.matches('master')
 }
 
 String readChange() {
