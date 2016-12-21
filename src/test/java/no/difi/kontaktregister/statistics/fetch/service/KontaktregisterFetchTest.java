@@ -1,130 +1,64 @@
 package no.difi.kontaktregister.statistics.fetch.service;
 
-import no.difi.kontaktregister.statistics.testutils.FileCreatorUtil;
-import no.difi.kontaktregister.statistics.testutils.RestServiceMockFactory;
-import no.difi.kontaktregister.statistics.configuration.Application;
-import no.difi.kontaktregister.statistics.configuration.Config;
-import no.difi.kontaktregister.statistics.context.SpringExtension;
-import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
-import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
 import no.difi.kontaktregister.statistics.util.KontaktregisterReportType;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.client.MockRestServiceServer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
+import java.time.ZonedDateTime;
 
-import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.filename;
-import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.filepath;
-import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.firstPath;
-import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D5;
 import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D7;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {Application.class, Config.class})
-@SpringBootTest({
-        "url.base.kontaktregister=http://admin-test1.difi.eon.no",
-        "url.base.statistikk=http://test-statistikk-inndata.difi.no",
-        "file.base.difi-statistikk=/run/secrets/krr-stat-pumba"})
-@DisplayName("Reading kontaktregister data")
+@DisplayName("When reading kontaktregister data")
 public class KontaktregisterFetchTest {
-    @Autowired
-    private RestTemplate restTemplate;
-
-    @Autowired
     private KontaktregisterFetch service;
 
-    private String basePath = "";
+    @Mock
+    private RestTemplate restTemplateMock;
 
     @BeforeEach
     public void setUp() throws IOException {
-        FileCreatorUtil.createPasswordFileAndPath("secret", basePath);
+        initMocks(this);
+
+        service = new KontaktregisterFetch(restTemplateMock);
     }
 
-    @AfterEach
-    public void tearDown() throws IOException {
-        FileCreatorUtil.removeFile(basePath + filepath + filename);
-        FileCreatorUtil.removePath(basePath + filepath);
-        FileCreatorUtil.removePath(basePath + firstPath);
+    @Test
+    @DisplayName("It should get RestClientException when it fails")
+    public void shouldGetRestClientExceptionWhenReturnedIsNotJson() {
+        when(restTemplateMock.getForObject(anyString(), anyObject(), anyObject(), anyObject(), anyObject(), anyObject(), anyObject(), anyObject())).thenThrow(new RestClientException(""));
+
+        service.perform("d5", ZonedDateTime.now());
     }
 
-    @Nested
-    @DisplayName("When reading from report D5")
-    class ReportD5 {
-        @Test
-        @DisplayName("Media-type is not application/json, fail with RestClientException")
-        public void shouldGetRestClientExceptionWhenWrongMediatype() {
-            LocalDateTime currentTime = LocalDateTime.now();
+    @Test
+    @DisplayName("It should pass on correct parameters and succeed when all parameters are available")
+    public void shouldPassParametersToIngestClientWhenAllParametersAreCorrect() {
+        when(restTemplateMock.getForObject(anyString(), anyObject(), anyObject(), anyObject(), anyObject(), anyObject(), anyObject(), anyObject())).thenReturn(expectedJson(D7));
+        final ZonedDateTime now = ZonedDateTime.now();
+        ArgumentCaptor<String> captureVararg = ArgumentCaptor.forClass(String.class);
 
-            createMockRestServiceServer(currentTime, MediaType.TEXT_PLAIN, D5);
+        service.perform(D7.getId(), now);
 
-            assertThrows(RestClientException.class, () -> service.perform(D5.getId(), currentTime.atZone(ZoneId.systemDefault())));
-        }
+        verify(restTemplateMock, times(1)).getForObject(anyString(), anyObject(), captureVararg.capture());
 
-        @Test
-        @DisplayName("Got data from D5")
-        public void shouldRetrieveDataWhenRequestingReportOnSpesificTime() {
-            LocalDateTime currentTime = LocalDateTime.now();
-
-            MockRestServiceServer server = createMockRestServiceServer(currentTime, MediaType.APPLICATION_JSON, D5);
-
-            KontaktregisterField[] consumer = service.perform(D5.getId(), currentTime.atZone(ZoneId.systemDefault()));
-            List<KontaktregisterValue> field = consumer[0].getValues();
-
-            server.verify();
-            assertAll(  () -> assertEquals(field.size(), 2),
-                        () -> assertEquals(field.get(0).getValue(), "Aktive brukere med e-post"));
-        }
-    }
-
-    @Nested
-    @DisplayName("When reading from report D7")
-    class ReportD7 {
-        @Test
-        @DisplayName("Media-type is not application/json, fail with RestClientException")
-        public void shouldGetRestClientExceptionWhenWrongMediatype() {
-            LocalDateTime currentTime = LocalDateTime.now();
-
-            createMockRestServiceServer(currentTime, MediaType.TEXT_PLAIN, D7);
-
-            assertThrows(RestClientException.class, () -> service.perform(D7.getId(), currentTime.atZone(ZoneId.systemDefault())));
-        }
-
-        @Test
-        @DisplayName("Got data from D7")
-        public void shouldRetrieveDataWhenRequestingReportOnSpesificTime() {
-            LocalDateTime currentTime = LocalDateTime.now();
-
-            MockRestServiceServer server = createMockRestServiceServer(currentTime, MediaType.APPLICATION_JSON, D7);
-
-            KontaktregisterField[] consumer = service.perform(D7.getId(), currentTime.atZone(ZoneId.systemDefault()));
-            List<KontaktregisterValue> field = consumer[0].getValues();
-
-            server.verify();
-            assertAll(  () -> assertEquals(field.size(), 4),
-                        () -> assertEquals(field.get(0).getValue(), "Inaktive postbokser"));
-        }
-    }
-
-    private MockRestServiceServer createMockRestServiceServer(LocalDateTime dateTime, MediaType mediaType, KontaktregisterReportType report) {
-        return RestServiceMockFactory.createMockRestServiceServer(
-                dateTime,
-                mediaType,
-                restTemplate,
-                report.getId(),
-                expectedJson(report)
+        assertAll(
+                () -> assertEquals(D7.getId(), captureVararg.getAllValues().get(0)),
+                () -> assertEquals(now.getYear(), captureVararg.getAllValues().get(1)),
+                () -> assertEquals(now.getMonthValue(), captureVararg.getAllValues().get(2)),
+                () -> assertEquals(now.getDayOfMonth(), captureVararg.getAllValues().get(3)),
+                () -> assertEquals(now.getHour(), captureVararg.getAllValues().get(4))
         );
     }
 
