@@ -2,8 +2,8 @@ package no.difi.kontaktregister.statistics.util;
 
 import no.difi.kontaktregister.statistics.exception.KontaktregisterStatisticsError;
 
-class UtilError extends KontaktregisterStatisticsError {
-    UtilError(String message) {
+public class UtilError extends KontaktregisterStatisticsError {
+    public UtilError(String message) {
         super(message);
     }
 }

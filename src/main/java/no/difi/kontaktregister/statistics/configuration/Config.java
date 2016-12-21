@@ -4,6 +4,7 @@ import no.difi.kontaktregister.statistics.fetch.service.KontaktregisterFetch;
 import no.difi.kontaktregister.statistics.push.mapper.StatisticsMapper;
 import no.difi.kontaktregister.statistics.push.service.KontaktregisterPush;
 import no.difi.kontaktregister.statistics.schedule.KontaktregisterScheduler;
+import no.difi.kontaktregister.statistics.util.ReadSecret;
 import no.difi.kontaktregister.statistics.util.StatisticsReportType;
 import no.difi.statistics.ingest.client.IngestClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class Config {
     public Config(Environment environment) {
         try {
 
-            password = environment.getRequiredProperty("file.base.difi-statistikk");
+            password = ReadSecret.getPwd(environment.getRequiredProperty("file.base.difi-statistikk"));
             baseUrl = "url.base.statistikk";
             new URL(environment.getRequiredProperty("url.base.kontaktregister"));
             new URL(environment.getRequiredProperty(baseUrl));

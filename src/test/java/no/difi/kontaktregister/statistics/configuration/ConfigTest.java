@@ -1,5 +1,6 @@
 package no.difi.kontaktregister.statistics.configuration;
 
+import no.difi.kontaktregister.statistics.util.UtilError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,5 +84,15 @@ public class ConfigTest {
         when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn("some.path");
 
         new Config(environmentMock);
+    }
+
+    @Test
+    @DisplayName("Should get UtilError when failing to read secret")
+    public void shouldGetUtilErrorWhenFailingToReadSecret() {
+        when(environmentMock.getRequiredProperty("url.base.kontaktregister")).thenReturn(VALID_URL);
+        when(environmentMock.getRequiredProperty("url.base.statistikk")).thenReturn(VALID_URL);
+        when(environmentMock.getRequiredProperty("file.base.difi-statistikk")).thenReturn("some.path");
+
+        assertThrows(UtilError.class, () -> new Config(environmentMock));
     }
 }
