@@ -12,6 +12,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -36,11 +37,12 @@ import static org.mockito.MockitoAnnotations.initMocks;
 @SpringBootTest({
         "url.base.kontaktregister=http://admin-test1.difi.eon.no",
         "url.base.statistikk=http://test-statistikk-inndata.difi.no",
-        "file.base.difi-statistikk=c:/projects/kontaktregister-statistikk-klient/target/test-classes/run/secrets/krr-stat-pumba"})
+        "file.base.difi-statistikk=/run/secrets/krr-stat-pumba"})
 @DisplayName("Reading kontaktregister data")
 public class KontaktregisterFetchTest {
     @Autowired
     private RestTemplate restTemplate;
+//        "file.base.difi-statistikk=c:/projects/kontaktregister-statistikk-klient/target/test-classes/run/secrets/krr-stat-pumba"})
 
     @Autowired
     private KontaktregisterFetch service;

@@ -20,8 +20,6 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 
     private static final Namespace namespace = Namespace.create(SpringExtension.class);
 
-    private final String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-    private String file;
 
     @Override
     public void beforeAll(ContainerExtensionContext context) throws Exception {
@@ -39,7 +37,7 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-        FileCreatorUtil.createPasswordFileAndPath("secret", basePath);
+        FileCreatorUtil.createPasswordFileAndPath("secret", "");
 
         getTestContextManager(context).prepareTestInstance(testInstance);
     }
