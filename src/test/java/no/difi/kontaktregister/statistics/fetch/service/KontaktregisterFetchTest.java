@@ -42,12 +42,11 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class KontaktregisterFetchTest {
     @Autowired
     private RestTemplate restTemplate;
-//        "file.base.difi-statistikk=c:/projects/kontaktregister-statistikk-klient/target/test-classes/run/secrets/krr-stat-pumba"})
 
     @Autowired
     private KontaktregisterFetch service;
 
-    private String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    private String basePath = "";
 
     @BeforeEach
     public void setUp() throws IOException {

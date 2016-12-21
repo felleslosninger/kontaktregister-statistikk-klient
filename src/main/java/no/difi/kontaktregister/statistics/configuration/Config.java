@@ -5,7 +5,6 @@ import no.difi.kontaktregister.statistics.push.mapper.StatisticsMapper;
 import no.difi.kontaktregister.statistics.push.service.KontaktregisterPush;
 import no.difi.kontaktregister.statistics.schedule.KontaktregisterScheduler;
 import no.difi.kontaktregister.statistics.util.ReadSecret;
-import no.difi.kontaktregister.statistics.util.StatisticsReportType;
 import no.difi.statistics.ingest.client.IngestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
