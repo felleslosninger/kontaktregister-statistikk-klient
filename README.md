@@ -31,11 +31,9 @@ Etter bygg kan applikasjonen startes med
 **localhost**
 `java -jar ./target/ krr-statistikk-klient*.jar \
   --url.base.kontaktregister=http://admin-test1.difi.eon.no \
-  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no \
-  --file.base.difi-statistikk=/run/secrets/krr-stat-pumba`
+  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no`
 
 **Docker**
 `mvn docker:run \
   --url.base.kontaktregister=http://admin-test1.difi.eon.no \
-  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no \
-  --file.base.difi-statistikk=/run/secrets/krr-stat-pumba`
+  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no`

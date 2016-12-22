@@ -58,11 +58,11 @@ createService() {
             --mode replicated \
             --replicas 1 \
             --name ${service} \
+            --secret krr-stat-pumba \
             -p 8084:8080 \
             ${image} \
             --url.base.kontaktregister=${kontaktregisterurl} \
-            --url.base.statistikk=${statistikkurl} \
-            --file.base.difi-statistikk=/run/secrets/krr-stat-pumba
+            --url.base.statistikk=${statistikkurl}
             ) || fail "Failed to create service ${service}"
         ;;
     esac
@@ -80,7 +80,8 @@ updateService() {
     image=$(image ${service} ${version})
     output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkurl} ${version} ; return; }
     output=$(sudo docker service update ${service} \
-            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl} --file.base.difi-statistikk=/run/secrets/krr-stat-pumba" ) \
+            --secret-add krr-stat-pumba
+            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl}" ) \
         && ok || fail
     verify ${version} || return $?
 }
