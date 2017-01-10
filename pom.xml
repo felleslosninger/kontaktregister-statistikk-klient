@@ -24,7 +24,7 @@
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
         <junit5.surefire.plugin>1.0.0-M2</junit5.surefire.plugin>
         <junit5.version>5.0.0-M2</junit5.version>
-        <ingestclient.version>201612140940</ingestclient.version>
+        <ingestclient.version>201701091342</ingestclient.version>
     </properties>
 
     <dependencies>
@@ -48,6 +48,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
 
         <dependency>

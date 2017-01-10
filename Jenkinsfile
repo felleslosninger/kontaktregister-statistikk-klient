@@ -33,7 +33,7 @@ if (isDeployBuild()) {
         node {
             unstash 'pipeline'
             sh "ssh 'eid-test-docker01.dmz.local' bash -s -- < pipeline/application.sh update \
-                http://admin-test1.difi.eon.no \
+                https://admin-test1.difi.eon.no \
                 http://test-statistikk-inndata.difi.no \
                 ${version}"
         }

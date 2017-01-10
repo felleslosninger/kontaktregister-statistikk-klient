@@ -1,9 +1,11 @@
 package no.difi.kontaktregister.statistics.configuration;
 
 import no.difi.kontaktregister.statistics.fetch.service.KontaktregisterFetch;
+import no.difi.kontaktregister.statistics.fetch.service.LastDatapoint;
 import no.difi.kontaktregister.statistics.push.mapper.StatisticsMapper;
 import no.difi.kontaktregister.statistics.push.service.KontaktregisterPush;
 import no.difi.kontaktregister.statistics.schedule.KontaktregisterScheduler;
+import no.difi.kontaktregister.statistics.transfer.DataTransfer;
 import no.difi.statistics.ingest.client.IngestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -14,39 +16,47 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 @EnableAutoConfiguration
 @EnableScheduling
 @Configuration
 public class Config {
-    private static final String owner = "991825827";
-    private static final String base_url = "https://test-statistikk-inndata.difi.no";
-    private static final String password = "q-^Z-FepFb>{%~p/Y42k";
+    public static final String owner = "991825827";
+    private static final String password = "c:uHW%m'7A2Uuo-~,lx~";
     private static final int readTimeout = 5000;
     private static final int connTimeout = 15000;
+    private final URL kontaktregisterUrl;
+    private final URL statisticsIngestUrlString;
 
     @Autowired
     public Config(Environment environment) {
         try {
-            new URL(environment.getRequiredProperty("url.base.kontaktregister"));
-            new URL(environment.getRequiredProperty("url.base.statistikk"));
+            kontaktregisterUrl = environment.getRequiredProperty("url.base.kontaktregister", URL.class);
+            statisticsIngestUrlString = environment.getRequiredProperty("url.base.ingest.statistikk", URL.class);
         } catch (IllegalStateException e) {
-            throw new ArgumentMissing("Missing argument. url.base.kontaktregister and url.base.url.base.statistikk is required", e);
-        } catch (MalformedURLException e) {
-            throw new ArgumentMissing("url.base.kontaktregister and/or url.base.url.base.statistikk not valid URL", e);
+            throw new ArgumentMissing("Missing argument. url.base.kontaktregister, url.base.ingest.statistikk and url.base.query.statistikk are required", e);
         }
     }
 
     @Bean
     public KontaktregisterScheduler kontaktregisterScheduler() {
-        return new KontaktregisterScheduler(kontaktregisterFetch(), konktaktregisterPush(), statisticsMapper());
+        return new KontaktregisterScheduler(dataTransfer(), lastDatapoint());
+    }
+
+    @Bean
+    public DataTransfer dataTransfer() {
+        return new DataTransfer(kontaktregisterFetch(), konktaktregisterPush(), statisticsMapper());
     }
 
     @Bean
     public KontaktregisterFetch kontaktregisterFetch() {
-        return new KontaktregisterFetch(restTemplate());
+        return new KontaktregisterFetch(kontaktregisterUrl, restTemplate());
+    }
+
+    @Bean
+    public LastDatapoint lastDatapoint() {
+        return new LastDatapoint(ingestClient());
     }
 
     @Bean
@@ -61,7 +71,7 @@ public class Config {
 
     @Bean
     public IngestClient ingestClient() {
-        return new IngestClient(base_url, readTimeout, connTimeout, owner, owner, password);
+        return new IngestClient(statisticsIngestUrlString, readTimeout, connTimeout, owner, owner, password);
     }
 
     @Bean

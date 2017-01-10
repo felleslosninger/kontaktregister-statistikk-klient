@@ -18,7 +18,7 @@ public class KontaktregisterFieldObjectMother {
         return fields;
     }
 
-    public static KontaktregisterField createEmptyKontaktregisterField() {
+    private static KontaktregisterField createEmptyKontaktregisterField() {
         return new KontaktregisterField();
     }
 }

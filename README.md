@@ -9,7 +9,7 @@ Du må ha følgende tilgjengelig:
 * Maven 3.3 eller nyere
 * Docker 1.12 eller nyere
 * Tilgang til IDPortens kontaktregister-API
-* Startet, evt. tilgang til statistikkapplikasjonen
+* Tilgang til statistikkapplikasjonen
 
 ##Første gangs oppsett
 Etter at prosjektet er klonet, kjør
@@ -24,16 +24,16 @@ Prosjektet leverer Java jar applikasjon pakket inn i Docker-bildet.
 
 Applikasjonen benytter to påkrevde parametre for å angi URL til kontaktregisteret og statistikkaplikasjonen:
 `url.base.kontaktregister`
-`url.base.url.base.statistikk`
+`url.base.ingest.statistikk`
 
 Etter bygg kan applikasjonen startes med
 
 **localhost**
 `java -jar ./target/ krr-statistikk-klient*.jar \
-  --url.base.kontaktregister=http://admin-test1.difi.eon.no \
-  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no`
+  --url.base.kontaktregister=https://admin-test1.difi.eon.no \
+  --url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no`
 
 **Docker**
 `mvn docker:run \
-  --url.base.kontaktregister=http://admin-test1.difi.eon.no \
-  --url.base.url.base.statistikk=http://test-statistikk-inndata.difi.no`
+  --url.base.kontaktregister=https://admin-test1.difi.eon.no \
+  --url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no`

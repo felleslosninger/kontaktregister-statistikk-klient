@@ -1,16 +1,17 @@
 package no.difi.kontaktregister.statistics.push.service;
 
-import no.difi.statistics.ingest.client.Distance;
 import no.difi.statistics.ingest.client.IngestClient;
-import no.difi.statistics.ingest.client.exception.DataPointAlreadyExists;
-import no.difi.statistics.ingest.client.exception.IngestFailed;
-import no.difi.statistics.ingest.client.exception.Unauthorized;
+import no.difi.statistics.ingest.client.IngestService;
 import no.difi.statistics.ingest.client.model.Measurement;
+import no.difi.statistics.ingest.client.model.TimeSeriesDefinition;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 import static java.lang.String.format;
+import static no.difi.statistics.ingest.client.model.MeasurementDistance.hours;
 
 public class KontaktregisterPush {
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -23,17 +24,29 @@ public class KontaktregisterPush {
 
     public boolean perform(String seriesName, TimeSeriesPoint timeSeriesPoint) {
         try {
-            ingestClient.ingest(seriesName, Distance.hour, timeSeriesPoint);
-        } catch (DataPointAlreadyExists e) {
+            ingestClient.ingest(TimeSeriesDefinition.builder().name(seriesName).distance(hours), timeSeriesPoint);
+        } catch (IngestService.DataPointAlreadyExists e) {
             logger.error("Whops, seems like that datapoint already exists");
             logger.error(format("Series name: %s", seriesName));
             for (Measurement measurement : timeSeriesPoint.getMeasurements()) {
                 logger.error(format(" - id: %s value: %d", measurement.getId(), measurement.getValue()));
             }
-        } catch (Unauthorized e) {
+        } catch (IngestService.Unauthorized e) {
             logger.error("Unauthorized, time for you to check the password you gave me", e);
-        } catch (IngestFailed e) {
+        } catch (IngestService.Failed e) {
             logger.error("Something failed when I tried to push data (my \"M$\" message)", e);
+        }
+        return true;
+    }
+
+    public boolean perform(String seriesName, List<TimeSeriesPoint> timeSeriePoints) {
+        final TimeSeriesDefinition tsd = TimeSeriesDefinition.builder()
+                .name(seriesName)
+                .distance(hours);
+        try {
+            ingestClient.ingest(tsd, timeSeriePoints);
+        } catch (IngestService.Failed e) {
+            logger.error("Could not open connection to statistics");
         }
         return true;
     }
