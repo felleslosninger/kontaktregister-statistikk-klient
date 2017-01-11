@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,8 @@ import java.util.Optional;
 import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static no.difi.kontaktregister.statistics.util.NameTranslateDefinitions.*;
 import static no.difi.kontaktregister.statistics.testutils.KontaktregisterFieldObjectMother.createKontaktregisterField;
-import static no.difi.kontaktregister.statistics.testutils.KontaktregisterFieldObjectMother.createaValidKontaktregisterField;
+import static no.difi.kontaktregister.statistics.util.NameTranslateDefinitions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("When mapping from D5 and D7 report Kontaktregister to Statistics")
@@ -35,54 +35,27 @@ public class StatisticsMapperTest {
     }
 
     @Test
-    @DisplayName("Mapper should skip field without error when not found in report definition")
-    public void shouldNotFailWhenFieldIsNotFoundInEnum() {
-        final TimeSeriesPoint result = mapper.map(asList(createaValidKontaktregisterField(), createKontaktregisterField("None existing", "42")), now());
+    @DisplayName("Mapper must contain all fields")
+    public void shouldFailWhenReportsDoesNotContainAllFields() {
+        MapperError exception = expectThrows(MapperError.class,
+                () -> mapper.map(singletonList(createKontaktregisterField(D5_5.getKrrField(), "42")), now()));
 
-        assertEquals(result.getMeasurements().size(), 1);
-    }
-
-    @Test
-    @DisplayName("Mapper should not add calculation field when no source entries in report")
-    public void shouldNotMapCalculationFieldWhenNoSourceFieldsGiven() {
-        final TimeSeriesPoint result = mapper.map(singletonList(createKontaktregisterField("None existing", "42")), now());
-
-        assertEquals(result.getMeasurements().size(), 0);
-    }
-
-    @Test
-    @DisplayName("Mapper should calculate single combination field into desired element")
-    public void shouldMapSingleCalculationElementIntoCalculationFieldInResult() {
-        final Measurement result = mapper.map(singletonList(createKontaktregisterField(D5_5.getKrrField(), "42")), now()).getMeasurements().get(0);
-
-        assertAll(() -> assertEquals(result.getId(), D5_5_6.getStatisticId()),
-                  () -> assertEquals(result.getValue(), 42));
+        assertEquals(exception.getMessage(), "Can not map. One or more indexes is missing");
     }
 
     @Test
     @DisplayName("Mapper should not fail when all elements are filtered away from result")
     public void shouldNotFailWhenResultsFromMapIsEmpty() {
-        final TimeSeriesPoint result = mapper.map(singletonList(createKontaktregisterField("None existing", "42")), now());
+        MapperError exception = expectThrows(MapperError.class,
+                () -> mapper.map(singletonList(createKontaktregisterField("None existing", "42")), now()));
 
-        assertEquals(result.getMeasurements().size(), 0);
-    }
-
-    @Test
-    @DisplayName("Mapper should calculate combination fields")
-    public void shouldMapCalculationFieldsWhenAvailable() {
-        final Measurement result = mapper.map(asList(
-                createKontaktregisterField(D5_5.getKrrField(), "10"),
-                createKontaktregisterField(D5_6.getKrrField(), "10")
-        ), now()).getMeasurements().get(0);
-
-        assertAll(() -> assertEquals(result.getId(), D5_5_6.getStatisticId()),
-                  () -> assertEquals(result.getValue(), 20));
+        assertEquals(exception.getMessage(), "No valid data after index mapping");
     }
 
     @Test
     @DisplayName("Mapper should contain all desired fields with values in output")
     public void shouldMapFieldsWhenAvailable() {
-        final List<Measurement> result = mapper.map(createValidKontaktregisterFieldListWithAllElements(), now()).getMeasurements();
+        final List<Measurement> result = mapper.map(createValidKontaktregisterFieldListWithAllElements(), now()).get(0).getMeasurements();
 
         assertAll(
                 () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_1.getStatisticId())).findFirst().get().getValue(), 1L),
@@ -91,21 +64,18 @@ public class StatisticsMapperTest {
                 () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_7.getStatisticId())).findFirst().get().getValue(), 16L),
                 () -> assertEquals(result.stream().filter(e -> e.getId().equals(D7_4.getStatisticId())).findFirst().get().getValue(), 32L),
                 () -> assertEquals(result.stream().filter(e -> e.getId().equals(D7_5.getStatisticId())).findFirst().get().getValue(), 64L),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D7_6.getStatisticId())).findFirst().get().getValue(), 256L)
+                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D7_6.getStatisticId())).findFirst().get().getValue(), 128L)
         );
     }
 
     @Test
     @DisplayName("Mapper should not map source fields for calculation")
     public void shouldNotMapSourceFieldsForCalculationsWhenAvailable() {
-        final List<Measurement> result = mapper.map(asList(
-                createKontaktregisterField(D5_5.getKrrField(), "10"),
-                createKontaktregisterField(D5_6.getKrrField(), "10")
-        ), now()).getMeasurements();
+        final List<Measurement> result = mapper.map(createValidKontaktregisterFieldListWithAllElements(), now()).get(0).getMeasurements();
 
-        assertAll(() -> assertEquals(result.size(), 1),
-                  () -> assertNotEquals(result.get(0).getId(), D5_5.getStatisticId()),
-                  () -> assertNotEquals(result.get(0), D5_6.getStatisticId()));
+        assertAll(
+                () -> assertFalse(result.contains(find(D5_5.getKrrField()))),
+                () -> assertFalse(result.contains(find(D5_6.getKrrField()))));
     }
 
     @Test
@@ -116,7 +86,7 @@ public class StatisticsMapperTest {
         elements.add(createKontaktregisterField("Winter is coming", "1072"));
         elements.add(createKontaktregisterField("Christmas", "Soon", "1009"));
 
-        final List<Measurement> result = mapper.map(elements, now()).getMeasurements();
+        final List<Measurement> result = mapper.map(elements, now()).get(0).getMeasurements();
 
         assertAll(
                 () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_5.getStatisticId())).findFirst(), Optional.empty()),
@@ -125,6 +95,43 @@ public class StatisticsMapperTest {
                 () -> assertEquals(result.stream().filter(e -> e.getId().equals("Winter is coming")).findFirst(), Optional.empty()),
                 () -> assertEquals(result.stream().filter(e -> e.getValue() == 1072L).findFirst(), Optional.empty()),
                 () -> assertEquals(result.stream().filter(e -> e.getValue() == 1069L).findFirst(), Optional.empty())
+        );
+    }
+
+    @Test
+    @DisplayName("Mapper should map all fields and values for extended period with larger dataset")
+    public void shouldMapAllValuesAndFieldsWhenMultipleValuesForEachFieldIsInResultset() {
+        final List<KontaktregisterField> elements = createValidKontaktregisterFieldListWithAllElementsAndMultipleValuesForEachField();
+
+        List<TimeSeriesPoint> tsp = mapper.map(elements, now());
+
+        for (int index = 0; index < tsp.size(); index++) {
+            assertMeasurement(tsp.get(index).getMeasurements(), index+1);
+        }
+    }
+
+    @Test
+    @DisplayName("Mapper should map list of datapoints with correct times")
+    public void shouldMapDatapointTimeCorrectWhenMultipleTimeSeries() {
+        final List<KontaktregisterField> elements = createValidKontaktregisterFieldListWithAllElementsAndMultipleValuesForEachField();
+
+        final ZonedDateTime reportDataDateTime = now();
+        List<TimeSeriesPoint> tsp = mapper.map(elements, reportDataDateTime);
+
+        for (int index = 0; index < tsp.size(); index++) {
+            assertEquals(tsp.get(index).getTimestamp().getHour(), reportDataDateTime.getHour() + index - 1);
+        }
+    }
+
+    private static void assertMeasurement(List<Measurement> result, long index) {
+        assertAll(
+                () -> assertEquals(result.stream().filter(e -> e.getValue() == index).findFirst().get().getValue(), index),
+                () -> assertEquals(result.stream().filter(e -> e.getValue() == index*2).findFirst().get().getValue(), index*2),
+                () -> assertEquals(result.stream().filter(e -> e.getValue() == index*4 + index*8).findFirst().get().getValue(), index*4 + index*8),
+                () -> assertEquals(result.stream().filter(e -> e.getValue() == index*16).findFirst().get().getValue(), index*16),
+                () -> assertEquals(result.stream().filter(e -> e.getValue() == index*32).findFirst().get().getValue(), index*32),
+                () -> assertEquals(result.stream().filter(e -> e.getValue() == index*64).findFirst().get().getValue(), index*64),
+                () -> assertEquals(result.stream().filter(e -> e.getValue() == index*128).findFirst().get().getValue(), index*128)
         );
     }
 
@@ -137,7 +144,20 @@ public class StatisticsMapperTest {
                 createKontaktregisterField(D5_7.getKrrField(), "16"),
                 createKontaktregisterField(D7_4.getKrrField(), "32"),
                 createKontaktregisterField(D7_5.getKrrField(), "64"),
-                createKontaktregisterField(D7_6.getKrrField(), "256")
+                createKontaktregisterField(D7_6.getKrrField(), "128")
+        );
+    }
+
+    private static List<KontaktregisterField> createValidKontaktregisterFieldListWithAllElementsAndMultipleValuesForEachField() {
+        return asList(
+                createKontaktregisterField(D5_1.getKrrField(), "1", "2", "3", "4", "5"),
+                createKontaktregisterField(D5_2.getKrrField(), "2", "4", "6", "8", "10"),
+                createKontaktregisterField(D5_5.getKrrField(), "4", "8", "12", "16", "20"),
+                createKontaktregisterField(D5_6.getKrrField(), "8", "16", "24", "32", "40"),
+                createKontaktregisterField(D5_7.getKrrField(), "16", "32", "48", "64", "80"),
+                createKontaktregisterField(D7_4.getKrrField(), "32", "64", "96", "128", "160"),
+                createKontaktregisterField(D7_5.getKrrField(), "64", "128", "192", "256", "320"),
+                createKontaktregisterField(D7_6.getKrrField(), "128", "256", "384", "512", "640")
         );
     }
 }

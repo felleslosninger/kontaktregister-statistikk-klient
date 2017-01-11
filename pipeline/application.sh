@@ -43,11 +43,11 @@ image() {
 createService() {
     service=$1
     kontaktregisterurl=${2}
-    statistikkurl=${3}
+    statistikkingesturl=${3}
     version=${4-'latest'}
     requireArgument 'service'
     requireArgument 'kontaktregisterurl'
-    requireArgument 'statistikkurl'
+    requireArgument 'statistikkingesturl'
     network='statistics'
     echo -n "Creating service ${service} of version ${version}... "
     image=$(image ${service} ${version})
@@ -62,7 +62,7 @@ createService() {
             -p 8084:8080 \
             ${image} \
             --url.base.kontaktregister=${kontaktregisterurl} \
-            --url.base.statistikk=${statistikkurl}
+            --url.base.ingest.statistikk=${statistikkingesturl} \
             ) || fail "Failed to create service ${service}"
         ;;
     esac
@@ -71,17 +71,18 @@ createService() {
 updateService() {
     service=$1
     kontaktregisterurl=${2}
-    statistikkurl=${3}
+    statistikkingesturl=${3}
     version=${4-'latest'}
     requireArgument 'service'
     requireArgument 'kontaktregisterurl'
-    requireArgument 'statistikkurl'
+    requireArgument 'statistikkingesturl'
     echo -n "Updating service ${service} to version ${version}... "
     image=$(image ${service} ${version})
-    output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkurl} ${version} ; return; }
+    output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkingesturl} ${version} ; return; }
     output=$(sudo docker service update ${service} \
-            --secret-add krr-stat-pumba
+            --secret-add krr-stat-pumba \
             --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl}" ) \
+            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.ingest.statistikk=${statistikkingesturl}" ) \
         && ok || fail
     verify ${version} || return $?
 }
@@ -133,12 +134,12 @@ isServiceAvailable() {
 
 update() {
     kontaktregisterurl=${1}
-    statistikkurl=${2}
+    statistikkingesturl=${2}
     version=${3-'latest'}
     requireArgument 'kontaktregisterurl'
-    requireArgument 'statistikkurl'
+    requireArgument 'statistikkingesturl'
     echo "Updating application to version ${version}..."
-    updateService 'kontaktregister-statistikk' ${kontaktregisterurl} ${statistikkurl} ${version} || return $?
+    updateService 'kontaktregister-statistikk' ${kontaktregisterurl} ${statistikkingesturl} ${version} || return $?
     echo "Application updated"
 }
 

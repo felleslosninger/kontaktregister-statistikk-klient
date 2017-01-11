@@ -20,7 +20,7 @@ public class ReadSecretTest {
     @Test
     @DisplayName("Expect UtilError when secret can't be found")
     public void shouldGetUtilErrorWhenNoSecretIsFound() {
-        assertThrows(UtilError.class, () -> getPwd("/run/secrets/krr-stat-pumba"));
+        assertThrows(UtilError.class, () -> getPwd("/run/secrets/krr-stat-wrong-name"));
     }
 
     @Test
