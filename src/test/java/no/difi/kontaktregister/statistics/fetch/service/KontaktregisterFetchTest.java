@@ -47,7 +47,7 @@ public class KontaktregisterFetchTest {
     class ReportD5 {
         @Test
         @DisplayName("Media-type is not application/json, fail with RestClientException")
-        public void shouldGetRestClientExceptionWhenWrongMediatype() {
+        public void shouldGetRestClientExceptionWhenWrongMediatypeFromD5() {
             createMockRestServiceServer(MediaType.TEXT_PLAIN, D5, Datasize.sample);
 
             assertThrows(RestClientException.class, () -> service.perform(D5.getId(), from, to));
@@ -55,7 +55,7 @@ public class KontaktregisterFetchTest {
 
         @Test
         @DisplayName("Got data from D5")
-        public void shouldRetrieveDataWhenRequestingReportOnSpesificTime() {
+        public void shouldRetrieveDataFromD5WhenRequestingReportOnSpesificTime() {
             final MockRestServiceServer server = createMockRestServiceServer(MediaType.APPLICATION_JSON, D5, Datasize.sample);
 
             KontaktregisterField[] consumer = service.perform(D5.getId(), from, to);
@@ -68,7 +68,7 @@ public class KontaktregisterFetchTest {
 
         @Test
         @DisplayName("It should handle dataset over larger period")
-        public void shouldHandleDatasetWhenPeriodReturnsMoreThanSingleDataset() {
+        public void shouldHandleDatasetFromD5WhenPeriodReturnsMoreThanSingleDataset() {
             final MockRestServiceServer server = createMockRestServiceServer(MediaType.APPLICATION_JSON, D5, Datasize.full);
 
             KontaktregisterField[] consumer = service.perform(D5.getId(), from, to);
@@ -85,7 +85,7 @@ public class KontaktregisterFetchTest {
     class ReportD7 {
         @Test
         @DisplayName("Media-type is not application/json, fail with RestClientException")
-        public void shouldGetRestClientExceptionWhenWrongMediatype() {
+        public void shouldGetRestClientExceptionWhenWrongMediatypeFromD7() {
             createMockRestServiceServer(MediaType.TEXT_PLAIN, D7, Datasize.sample);
 
             assertThrows(RestClientException.class, () -> service.perform(D7.getId(), from, to));
@@ -93,7 +93,7 @@ public class KontaktregisterFetchTest {
 
         @Test
         @DisplayName("Got data from D7")
-        public void shouldRetrieveDataWhenRequestingReportOnSpesificTime() {
+        public void shouldRetrieveDataFromD7WhenRequestingReportOnSpesificTime() {
             final MockRestServiceServer server = createMockRestServiceServer(MediaType.APPLICATION_JSON, D7, Datasize.sample);
 
             KontaktregisterField[] consumer = service.perform(D7.getId(), from, to);
@@ -106,7 +106,7 @@ public class KontaktregisterFetchTest {
 
         @Test
         @DisplayName("It should handle dataset over larger period")
-        public void shouldHandleDatasetWhenPeriodReturnsMoreThanSingleDataset() {
+        public void shouldHandleDatasetFromD7WhenPeriodReturnsMoreThanSingleDataset() {
             final MockRestServiceServer server = createMockRestServiceServer(MediaType.APPLICATION_JSON, D7, Datasize.full);
 
             KontaktregisterField[] consumer = service.perform(D7.getId(), from, to);
