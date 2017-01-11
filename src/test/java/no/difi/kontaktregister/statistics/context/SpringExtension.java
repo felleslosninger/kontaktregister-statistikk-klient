@@ -37,8 +37,6 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
-        FileCreatorUtil.createPasswordFileAndPath("secret", "");
-
         getTestContextManager(context).prepareTestInstance(testInstance);
     }
 
