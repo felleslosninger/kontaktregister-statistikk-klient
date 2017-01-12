@@ -5,11 +5,10 @@ import no.difi.kontaktregister.statistics.configuration.Config;
 import no.difi.kontaktregister.statistics.context.SpringExtension;
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
+import no.difi.kontaktregister.statistics.testutils.FileCreatorUtil;
 import no.difi.kontaktregister.statistics.testutils.RestServiceMockFactory;
 import no.difi.kontaktregister.statistics.util.KontaktregisterReportType;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,9 +18,14 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.filename;
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.filepath;
+import static no.difi.kontaktregister.statistics.testutils.FileCreatorUtil.firstPath;
 import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D5;
 import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D7;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Application.class, Config.class})
 @SpringBootTest({
+        "file.base.difi-statistikk=secret",
         "url.base.kontaktregister=https://admin-test1.difi.eon.no",
         "url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no"})
 @DisplayName("Reading kontaktregister data")
@@ -39,8 +44,20 @@ public class KontaktregisterFetchTest {
     @Autowired
     private KontaktregisterFetch service;
 
+    private String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
     private ZonedDateTime from = ZonedDateTime.now();
     private ZonedDateTime to = ZonedDateTime.now().minusDays(2);
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        final File file = FileCreatorUtil.createPasswordFileAndPath("someSecret", basePath);
+    }
+
+    @AfterEach
+    public void tearDown() throws IOException {
+        FileCreatorUtil.removeFile(basePath + filepath + filename);
+        FileCreatorUtil.removePath(basePath + filepath);
+        FileCreatorUtil.removePath(basePath + firstPath);    }
 
     @Nested
     @DisplayName("When reading from report D5")

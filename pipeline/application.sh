@@ -81,7 +81,6 @@ updateService() {
     output=$(sudo docker service inspect ${service}) || { echo "Service needs to be created"; createService ${service} ${kontaktregisterurl} ${statistikkingesturl} ${version} ; return; }
     output=$(sudo docker service update ${service} \
             --secret-add krr-stat-pumba \
-            --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.statistikk=${statistikkurl}" ) \
             --args "--url.base.kontaktregister=${kontaktregisterurl} --url.base.ingest.statistikk=${statistikkingesturl}" ) \
         && ok || fail
     verify ${version} || return $?
