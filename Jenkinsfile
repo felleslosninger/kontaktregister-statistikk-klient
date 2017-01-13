@@ -38,6 +38,19 @@ if (isDeployBuild()) {
                 ${version}"
         }
     }
+
+    stage('Production deploy') {
+        timeout(time: 5, unit: 'DAYS') {
+            input "Do you approve deployment of version ${version} to production?"
+            node {
+                unstash 'pipeline'
+                sh "ssh 'eid-prod-docker01.dmz.local' bash -s -- < pipeline/application.sh update \
+                    https://admin.difi.eon.no \
+                    https://statistikk-inndata.difi.no/ \
+                     ${version}"
+            }
+        }
+    }
 }
 
 boolean isDeployBuild() {
