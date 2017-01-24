@@ -22,8 +22,8 @@
         <java.version>1.8</java.version>
         <difi.docker.registry>docker.io/difi</difi.docker.registry>
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
-        <junit5.surefire.plugin>1.0.0-M2</junit5.surefire.plugin>
-        <junit5.version>5.0.0-M2</junit5.version>
+        <junit5.surefire.plugin>1.0.0-M3</junit5.surefire.plugin>
+        <junit5.version>5.0.0-M3</junit5.version>
         <ingestclient.version>201701091342</ingestclient.version>
     </properties>
 
