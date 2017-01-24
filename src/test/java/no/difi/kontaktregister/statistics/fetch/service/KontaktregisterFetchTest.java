@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {Application.class, Config.class})
 @SpringBootTest({
-        "file.base.difi-statistikk=secret",
+        "file.base.difi-statistikk=/run/secrets/krr-stat-pumba",
         "url.base.kontaktregister=https://admin-test1.difi.eon.no",
         "url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no"})
 @DisplayName("Reading kontaktregister data")
@@ -44,13 +44,13 @@ public class KontaktregisterFetchTest {
     @Autowired
     private KontaktregisterFetch service;
 
-    private String basePath = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+    private static String basePath = KontaktregisterFetch.class.getProtectionDomain().getCodeSource().getLocation().getPath();
     private ZonedDateTime from = ZonedDateTime.now();
     private ZonedDateTime to = ZonedDateTime.now().minusDays(2);
 
     @BeforeEach
     public void setUp() throws IOException {
-        final File file = FileCreatorUtil.createPasswordFileAndPath("someSecret", basePath);
+        FileCreatorUtil.createPasswordFileAndPath("someSecret", basePath);
     }
 
     @AfterEach
@@ -72,7 +72,7 @@ public class KontaktregisterFetchTest {
 
         @Test
         @DisplayName("Got data from D5")
-        public void shouldRetrieveDataFromD5WhenRequestingReportOnSpesificTime() {
+        public void shouldRetrieveDataFromD5WhenRequestingReportOnSpesificTime() throws Exception {
             final MockRestServiceServer server = createMockRestServiceServer(MediaType.APPLICATION_JSON, D5, Datasize.sample);
 
             KontaktregisterField[] consumer = service.perform(D5.getId(), from, to);

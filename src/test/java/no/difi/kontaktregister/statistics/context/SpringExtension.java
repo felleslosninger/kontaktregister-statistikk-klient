@@ -1,5 +1,6 @@
 package no.difi.kontaktregister.statistics.context;
 
+import no.difi.kontaktregister.statistics.fetch.service.KontaktregisterFetch;
 import no.difi.kontaktregister.statistics.testutils.FileCreatorUtil;
 import org.junit.jupiter.api.extension.*;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
@@ -37,6 +38,8 @@ public class SpringExtension implements BeforeAllCallback, AfterAllCallback, Tes
 
     @Override
     public void postProcessTestInstance(Object testInstance, ExtensionContext context) throws Exception {
+        FileCreatorUtil.createPasswordFileAndPath("someSecret", "");
+
         getTestContextManager(context).prepareTestInstance(testInstance);
     }
 

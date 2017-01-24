@@ -35,9 +35,9 @@ public class Config {
     @Autowired
     public Config(Environment environment) {
         try {
-            password = ReadSecret.getPwd(environment.getRequiredProperty("file.base.difi-statistikk"));
             kontaktregisterUrl = new URL(environment.getRequiredProperty("url.base.kontaktregister"));
             statisticsIngestUrl = new URL(environment.getRequiredProperty("url.base.ingest.statistikk"));
+            password = ReadSecret.getPwd(environment.getRequiredProperty("file.base.difi-statistikk"));
         } catch (IllegalStateException e) {
             throw new ArgumentMissing("One or more of the required arguments is missing. Check with documentation which are required.", e);
         } catch (MalformedURLException e) {
