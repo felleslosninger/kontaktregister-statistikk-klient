@@ -1,4 +1,5 @@
 feature/PBLEID-13038: Sikre passord i alle miljøer og ikke eksponere passordet i kildekoden
+feature/PBLEID-12727: Utrulling til produksjon
 feature/PBLEID-13029: KRR-statistikken skal oppdatere seg ved nedetid vha last-api-et til statistikken
 feature/PBLEID-13159: Statistikk skal hentes og mappes etter ønsket datamodell
 feature/PBLEID-12955: Dynamiske URL-er mot kontaktregisteret og statistikk ingest-API-et
