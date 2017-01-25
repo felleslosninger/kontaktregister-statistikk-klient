@@ -26,8 +26,8 @@ import static no.difi.kontaktregister.statistics.util.StatisticsReportType.konta
 @EnableScheduling
 @Configuration
 public class Config {
-    private static final int readTimeout = 5000;
-    private static final int connTimeout = 15000;
+    private static final int readTimeout = 15000;
+    private static final int connTimeout = 60000;
     private static String password;
     private URL kontaktregisterUrl;
     private URL statisticsIngestUrl;
