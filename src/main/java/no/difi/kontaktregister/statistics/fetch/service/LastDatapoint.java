@@ -22,5 +22,4 @@ public class LastDatapoint {
             return ZonedDateTime.of(2015, 5, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
         return lastPoint.getTimestamp();
     }
-
 }
