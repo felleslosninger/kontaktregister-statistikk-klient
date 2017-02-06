@@ -3,7 +3,7 @@ package no.difi.kontaktregister.statistics.util;
 import static java.lang.String.format;
 
 public enum StatisticsReportType {
-    kontaktregister("kontaktogreservasjonsregister", "991825827");
+    kontaktregister("kontaktregister", "991825827");
 
     private final String seriesId;
     private final String owner;
