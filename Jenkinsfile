@@ -128,6 +128,11 @@ pipeline {
             agent any
             steps {
                 script {
+                    if (env.jobAborted == "true") {
+                        error("Job was aborted")
+                    } else if (env.codeApproved == "false") {
+                        error("Code was not approved")
+                    }
                     sshagent([gitSshKey]) {
                         sh 'git push origin HEAD:master'
                     }
