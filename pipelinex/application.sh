@@ -32,7 +32,7 @@ image() {
     requireArgument 'service'
     case "${service}" in
         "kontaktregister-statistikk")
-            image="difi/kontaktregister-statistikk-klient:${version}"
+            image="eid-jenkins02.dmz.local:8081/kontaktregister-statistikk-klient:${version}"
             ;;
         *)
             fail "Unknown service ${service}"
