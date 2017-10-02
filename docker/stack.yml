@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+  kontaktregister-statistikk-klient:
+    image: eid-jenkins02.dmz.local:8081/kontaktregister-statistikk-klient:${VERSION}
+    ports:
+      - "8084:8080"
+    configs:
+      - source: kontaktregister-statistikk-klient
+        target: /application.properties
+    secrets:
+      - source: kontaktregister-statistikk-klient_ingest-password
+        target: krr-stat-pumba
+    networks:
+      - statistics
+
+networks:
+  statistics:
+    external: true
+
+secrets:
+  kontaktregister-statistikk-klient_ingest-password:
+    external: true
+
+configs:
+  kontaktregister-statistikk-klient:
+    external: true
+

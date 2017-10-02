@@ -26,7 +26,7 @@ public class KontaktregisterScheduler {
         this.lastDatapoint = lastDatapoint;
     }
 
-    @Scheduled(cron = cron_ten_minutes_past_every_hour)
+    @Scheduled(cron = cron_one_minute_interval)
     public void fetchKontaktregisterReportData() {
         final ZonedDateTime startTime = ZonedDateTime.now();
         logger.info(format("Starting fetch from kontaktregister reports %s ", startTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)));
