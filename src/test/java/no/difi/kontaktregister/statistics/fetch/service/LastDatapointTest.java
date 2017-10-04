@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import java.net.MalformedURLException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static java.time.ZonedDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ public class LastDatapointTest {
     @Test
     @DisplayName("It should return ZoneDateTime set to 15.05.01T00 when no datapoint is found")
     public void shouldReturnNullWhenResponseCode200AndEmptyDataset() {
-        when(ingestClientMock.last(anyObject())).thenReturn(null);
+        when(ingestClientMock.last(anyObject())).thenReturn(Optional.empty());
         final ZonedDateTime expected = ZonedDateTime.of(2015, 5, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
 
         assertEquals(expected, lastDatapoint.get(seriesId));
@@ -59,13 +60,13 @@ public class LastDatapointTest {
         assertEquals(dateTime, lastDatapoint.get(seriesId));
     }
 
-    private TimeSeriesPoint createResponseOk() {
+    private Optional<TimeSeriesPoint> createResponseOk() {
         return createResponseOk(now().minusDays(3));
     }
 
 
-    private TimeSeriesPoint createResponseOk(ZonedDateTime dateTime) {
-        return TimeSeriesPoint.builder()
+    private Optional<TimeSeriesPoint> createResponseOk(ZonedDateTime dateTime) {
+        return Optional.of(TimeSeriesPoint.builder()
                 .timestamp(dateTime)
                 .measurement("d5_8", 31)
                 .measurement("d5_11", 63)
@@ -78,7 +79,7 @@ public class LastDatapointTest {
                 .measurement("d5_5", 62)
                 .measurement("d5_2", 2)
                 .measurement("d5_3", 2)
-                .build();
+                .build());
     }
 
 }

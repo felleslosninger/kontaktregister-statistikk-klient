@@ -24,7 +24,7 @@
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
         <junit5.surefire.plugin>1.0.0-M3</junit5.surefire.plugin>
         <junit5.version>5.0.0-M3</junit5.version>
-        <ingestclient.version>201701191531</ingestclient.version>
+        <ingestclient.version>2017-10-04-1424-707f5ef</ingestclient.version>
     </properties>
 
     <dependencies>
@@ -210,8 +210,9 @@
 
     <repositories>
         <repository>
-            <id>eid-releases</id>
+            <id>maven-releases</id>
             <url>${artifactory.url}/libs-release-local</url>
         </repository>
     </repositories>
+
 </project>
