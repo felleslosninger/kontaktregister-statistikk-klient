@@ -30,25 +30,18 @@ public class DataTransfer {
     public void transfer(ZonedDateTime from, ZonedDateTime to) {
         final List<KontaktregisterField> d5Report = asList(fetch.perform(D5.getId(), from, to));
         final List<KontaktregisterField> d7Report = asList(fetch.perform(D7.getId(), from, to));
-
-        if (!hasReportData(d5Report, d7Report)) {
-            throw new MapperError("No data retrieved from Kontaktregister");
-        } else {
-            List<KontaktregisterField> fields = new ArrayList<>();
-            fields.addAll(d5Report);
-            fields.addAll(d7Report);
-
-            final List<TimeSeriesPoint> datapoint = mapper.map(fields, from);
-            if (datapoint.size() == 1) {
-                push.perform(kontaktregister.seriesId(), datapoint.get(0));
-            }
-            else {
-                push.perform(kontaktregister.seriesId(), datapoint);
-            }
+        if (d5Report.isEmpty()) throw new MapperError("D5 report is empty");
+        if (d7Report.isEmpty()) throw new MapperError("D7 report is empty");
+        List<KontaktregisterField> fields = new ArrayList<>();
+        fields.addAll(d5Report);
+        fields.addAll(d7Report);
+        final List<TimeSeriesPoint> datapoint = mapper.map(fields, from);
+        if (datapoint.size() == 1) {
+            push.perform(kontaktregister.seriesId(), datapoint.get(0));
+        }
+        else {
+            push.perform(kontaktregister.seriesId(), datapoint);
         }
     }
 
-    private boolean hasReportData(List<KontaktregisterField> d5Report, List<KontaktregisterField> d7Report) {
-        return !(d5Report == null || d5Report.size() == 0) & !(d7Report == null || d7Report.size() == 0);
-    }
 }

@@ -4,14 +4,22 @@ import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
 import no.difi.kontaktregister.statistics.util.NameTranslateDefinitions;
 import no.difi.statistics.ingest.client.model.Measurement;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.swing.text.html.Option;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static no.difi.kontaktregister.statistics.util.NameTranslateDefinitions.*;
 
 public class StatisticsMapper {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     public List<TimeSeriesPoint> map(List<KontaktregisterField> fields, ZonedDateTime fromDateTime) {
         validateFields(fields);
 
@@ -25,30 +33,38 @@ public class StatisticsMapper {
 
     private List<TimeSeriesPoint> mapBulk(Map<NameTranslateDefinitions, List<Long>> measurements, ZonedDateTime dateTime) {
         List<TimeSeriesPoint> tsp = new ArrayList<>();
-        if (validateMeasurements(measurements)) {
-            for (int i = 0; i < measurements.get(D5_1).size(); i++) {
-                tsp.add(
-                        TimeSeriesPoint.builder()
-                                .timestamp(dateTime.minusHours(1).plusHours(i))
-                                .measurements(getMeasuermentForIndex(measurements, i))
-                                .build()
-                );
-            }
+        validateMeasurements(measurements);
+        for (int i = 0; i < measurements.get(D5_1).size(); i++) {
+            tsp.add(
+                    TimeSeriesPoint.builder()
+                            .timestamp(dateTime.minusHours(1).plusHours(i))
+                            .measurements(getMeasuermentForIndex(measurements, i))
+                            .build()
+            );
         }
         return tsp;
     }
 
     private List<Measurement> getMeasuermentForIndex(Map<NameTranslateDefinitions, List<Long>> measurementList, int index) {
-        List<Measurement> measurements = new ArrayList<>();
+        List<Measurement> measurements = Stream.of(D5_1, D5_2, D5_7, D7_4, D7_5, D7_6)
+                .map(f -> measurement(measurementList, f, index))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toList());
         long valD5i5i6 = measurementList.get(D5_5).get(index) + measurementList.get(D5_6).get(index);
-        measurements.add(new Measurement(D5_1.getStatisticId(), measurementList.get(D5_1).get(index)));
-        measurements.add(new Measurement(D5_2.getStatisticId(), measurementList.get(D5_2).get(index)));
         measurements.add(new Measurement(D5_5_6.getStatisticId(), valD5i5i6));
-        measurements.add(new Measurement(D5_7.getStatisticId(), measurementList.get(D5_7).get(index)));
-        measurements.add(new Measurement(D7_4.getStatisticId(), measurementList.get(D7_4).get(index)));
-        measurements.add(new Measurement(D7_5.getStatisticId(), measurementList.get(D7_5).get(index)));
-        measurements.add(new Measurement(D7_6.getStatisticId(), measurementList.get(D7_6).get(index)));
         return measurements;
+    }
+
+    private Optional<Measurement> measurement(Map<NameTranslateDefinitions, List<Long>> measurementList, NameTranslateDefinitions field, int index) {
+        return measurementValue(measurementList, index, field).map(v -> new Measurement(field.getStatisticId(), v));
+    }
+
+    private Optional<Long> measurementValue(Map<NameTranslateDefinitions, List<Long>> measurementList, int index, NameTranslateDefinitions field) {
+        if (measurementList.containsKey(field))
+            return Optional.of(measurementList.get(field).get(index));
+        else
+            return Optional.empty();
     }
 
     private Map<NameTranslateDefinitions, List<Long>> toHashMap(List<KontaktregisterField> fields) {
@@ -86,7 +102,9 @@ public class StatisticsMapper {
                 fieldId.add(field.getValues().get(i).getValue());
             }
         }
-        return NameTranslateDefinitions.find(fieldId.toString());
+        NameTranslateDefinitions result = NameTranslateDefinitions.find(fieldId.toString());
+        logger.info("Translated field from D7 report, using compound field id <" + fieldId.toString() + ">. Found: " + result);
+        return result;
     }
 
     private void validateFields(List<KontaktregisterField> fields) {
@@ -95,21 +113,23 @@ public class StatisticsMapper {
         }
     }
 
-    private boolean validateMeasurements(Map<NameTranslateDefinitions, List<Long>> measurements) {
+    private void validateMeasurements(Map<NameTranslateDefinitions, List<Long>> measurements) {
         if (measurements == null || measurements.size() == 0) {
             throw new MapperError("No valid data after index mapping");
         }
-        if (!(measurements.containsKey(D5_1)
-                && measurements.containsKey(D5_2)
-                && measurements.containsKey(D5_5)
-                && measurements.containsKey(D5_6)
-                && measurements.containsKey(D5_7)
-                && measurements.containsKey(D7_4)
-                && measurements.containsKey(D5_5)
-                && measurements.containsKey(D5_6))
-                ) {
-            throw new MapperError("Can not map. One or more indexes is missing");
-        }
-        return true;
+        validateMeasurement(D5_1, measurements);
+        validateMeasurement(D5_2, measurements);
+        validateMeasurement(D5_5, measurements);
+        validateMeasurement(D5_6, measurements);
+        validateMeasurement(D5_7, measurements);
+//        validateMeasurement(D7_4, measurements);
+//        validateMeasurement(D7_5, measurements);
+//        validateMeasurement(D7_6, measurements);
     }
+
+    private void validateMeasurement(NameTranslateDefinitions measurement, Map<NameTranslateDefinitions, List<Long>> measurements) {
+        if (!measurements.containsKey(measurement))
+            throw new MapperError("Measurement " + measurement + " is missing. What we have: " + measurements.keySet());
+    }
+
 }

@@ -37,16 +37,15 @@ public class StatisticsMapperTest {
     @Test
     @DisplayName("Mapper must contain all fields")
     public void shouldFailWhenReportsDoesNotContainAllFields() {
-        MapperError exception = expectThrows(MapperError.class,
+        MapperError exception = assertThrows(MapperError.class,
                 () -> mapper.map(singletonList(createKontaktregisterField(D5_5.getKrrField(), "42")), now()));
-
-        assertEquals(exception.getMessage(), "Can not map. One or more indexes is missing");
+        assertTrue(exception.getMessage().matches("Measurement .* is missing.*"));
     }
 
     @Test
     @DisplayName("Mapper should not fail when all elements are filtered away from result")
     public void shouldNotFailWhenResultsFromMapIsEmpty() {
-        MapperError exception = expectThrows(MapperError.class,
+        MapperError exception = assertThrows(MapperError.class,
                 () -> mapper.map(singletonList(createKontaktregisterField("None existing", "42")), now()));
 
         assertEquals(exception.getMessage(), "No valid data after index mapping");

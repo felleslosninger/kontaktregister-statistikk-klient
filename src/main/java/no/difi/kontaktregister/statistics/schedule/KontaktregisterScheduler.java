@@ -34,7 +34,7 @@ public class KontaktregisterScheduler {
         try {
             dataTransfer.transfer(lastDatapoint.get(kontaktregister.seriesId()), startTime);
         } catch (MapperError e) {
-            logger.info("No data from KRR, nothing to do", e);
+            logger.info("Failed to transfer data", e);
         }
 
         final ZonedDateTime endTime = ZonedDateTime.now();
