@@ -22,7 +22,7 @@ public class KontaktregisterPush {
         this.ingestClient = ingestClient;
     }
 
-    public boolean perform(String seriesName, TimeSeriesPoint timeSeriesPoint) {
+    public void perform(String seriesName, TimeSeriesPoint timeSeriesPoint) {
         try {
             ingestClient.ingest(TimeSeriesDefinition.builder().name(seriesName).distance(hours), timeSeriesPoint);
         } catch (IngestService.DataPointAlreadyExists e) {
@@ -31,23 +31,14 @@ public class KontaktregisterPush {
             for (Measurement measurement : timeSeriesPoint.getMeasurements()) {
                 logger.error(format(" - id: %s value: %d", measurement.getId(), measurement.getValue()));
             }
-        } catch (IngestService.Unauthorized e) {
-            logger.error("Unauthorized, time for you to check the password you gave me", e);
-        } catch (IngestService.Failed e) {
-            logger.error("Something failed when I tried to push data (my \"M$\" message)", e);
+            throw e;
         }
-        return true;
     }
 
-    public boolean perform(String seriesName, List<TimeSeriesPoint> timeSeriePoints) {
+    public void perform(String seriesName, List<TimeSeriesPoint> timeSeriePoints) {
         final TimeSeriesDefinition tsd = TimeSeriesDefinition.builder()
                 .name(seriesName)
                 .distance(hours);
-        try {
-            ingestClient.ingest(tsd, timeSeriePoints);
-        } catch (IngestService.Failed e) {
-            logger.error("Could not open connection to statistics");
-        }
-        return true;
+        ingestClient.ingest(tsd, timeSeriePoints);
     }
 }

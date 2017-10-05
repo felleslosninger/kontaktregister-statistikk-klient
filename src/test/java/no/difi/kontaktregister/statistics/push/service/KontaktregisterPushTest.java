@@ -1,29 +1,22 @@
 package no.difi.kontaktregister.statistics.push.service;
 
-import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import no.difi.statistics.ingest.client.IngestClient;
-import no.difi.statistics.ingest.client.model.Measurement;
 import no.difi.statistics.ingest.client.model.MeasurementDistance;
 import no.difi.statistics.ingest.client.model.TimeSeriesDefinition;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -108,51 +101,4 @@ public class KontaktregisterPushTest {
         }
     }
 
-    @Nested
-    @DisplayName("When initializing IngestClient API")
-    class InitializationErrorsFromIngestClient {
-        @Test
-        @DisplayName("Check that log message is correct when username is missing")
-        public void shouldFailWhenUsernameIsMissing() throws MalformedURLException {
-            createPushService(BASEURL, OWNER, "", PASSWORD).perform("series", createTimeSeriesPoint());
-
-            verifyLogMessage(appenderMock, "Something failed when I tried to push data (my \"M$\" message)");
-        }
-
-        @Test
-        @DisplayName("Check that log message is correct when password is missing")
-        public void shouldFailWhenPasswordIsMissing() throws MalformedURLException {
-            createPushService(BASEURL, OWNER, USERNAME, "").perform("series", createTimeSeriesPoint());
-
-            verifyLogMessage(appenderMock, "Something failed when I tried to push data (my \"M$\" message)");
-        }
-
-        @Test
-        @DisplayName("Check that log message is correct when owner is missing")
-        public void shouldFailAndLogWhenOwnerIsMissing() throws MalformedURLException {
-            createPushService(BASEURL, "", USERNAME, PASSWORD).perform("series", createTimeSeriesPoint());
-
-            verifyLogMessage(appenderMock, "Something failed when I tried to push data (my \"M$\" message)");
-        }
-
-        private KontaktregisterPush createPushService(String baseUrl, String owner, String username, String password) throws MalformedURLException {
-            return new KontaktregisterPush(new IngestClient(new URL(baseUrl), 1000, 3000, owner, username, password));
-        }
-    }
-
-    private TimeSeriesPoint createTimeSeriesPoint() {
-        return TimeSeriesPoint.builder()
-                .timestamp(ZonedDateTime.now())
-                .measurement(new Measurement("123", 234L))
-                .build();
-    }
-
-    private void verifyLogMessage(Appender mockAppender, String logText) {
-        verify(mockAppender).doAppend(argThat(new ArgumentMatcher() {
-            @Override
-            public boolean matches(final Object argument) {
-                return ((LoggingEvent)argument).getFormattedMessage().contains(logText);
-            }
-        }));
-    }
 }
