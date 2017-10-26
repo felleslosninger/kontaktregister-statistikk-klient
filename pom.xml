@@ -24,7 +24,7 @@
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
         <junit5.surefire.plugin>1.0.0-M3</junit5.surefire.plugin>
         <junit5.version>5.0.0-M3</junit5.version>
-        <ingestclient.version>2017-10-05-1500-6ec3bfa</ingestclient.version>
+        <ingestclient.version>2017-10-26-1221-162fcb1</ingestclient.version>
     </properties>
 
     <dependencies>
