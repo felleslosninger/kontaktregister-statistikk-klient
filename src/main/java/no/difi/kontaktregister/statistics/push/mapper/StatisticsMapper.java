@@ -1,18 +1,17 @@
 package no.difi.kontaktregister.statistics.push.mapper;
 
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
+import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
 import no.difi.kontaktregister.statistics.util.NameTranslateDefinitions;
 import no.difi.statistics.ingest.client.model.Measurement;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.text.html.Option;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static no.difi.kontaktregister.statistics.util.NameTranslateDefinitions.*;
 
@@ -71,24 +70,20 @@ public class StatisticsMapper {
         Map<NameTranslateDefinitions, List<Long>> measurements = new HashMap<>();
 
         for (KontaktregisterField field : fields) {
-            final NameTranslateDefinitions ro = findId(field);
-            if (ro != null) {
-                field.getValues().remove(0);
-                measurements.put(ro, toLongList(field));
+            if (findD5Id(field) != null) {
+                measurements.put(findD5Id(field), toLongList(field.getValues().subList(1, field.getValues().size())));
+            } else if (findD7Id(field) != null) {
+                measurements.put(findD7Id(field), toLongList(field.getValues().subList(3, field.getValues().size())));
             }
         }
 
         return measurements;
     }
 
-    private List<Long> toLongList(KontaktregisterField field) {
-        return field.getValues().stream()
+    private List<Long> toLongList(List<KontaktregisterValue> values) {
+        return values.stream()
                 .map(e -> Long.valueOf(e.getValue()))
                 .collect(toList());
-    }
-
-    private NameTranslateDefinitions findId(KontaktregisterField field) {
-        return findD5Id(field) != null ? findD5Id(field) : findD7Id(field);
     }
 
     private NameTranslateDefinitions findD5Id(KontaktregisterField field) {
@@ -98,7 +93,7 @@ public class StatisticsMapper {
     private NameTranslateDefinitions findD7Id(KontaktregisterField field) {
         StringJoiner fieldId = new StringJoiner("");
         if (field.getValues().size() >= 4) {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 3; i++) {
                 fieldId.add(field.getValues().get(i).getValue());
             }
         }
