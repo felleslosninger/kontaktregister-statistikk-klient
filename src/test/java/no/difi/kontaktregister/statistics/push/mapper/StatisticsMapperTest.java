@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static java.time.ZonedDateTime.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
 import static no.difi.kontaktregister.statistics.testutils.KontaktregisterFieldObjectMother.createKontaktregisterField;
 import static no.difi.kontaktregister.statistics.util.NameTranslateDefinitions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,13 +57,13 @@ public class StatisticsMapperTest {
         final List<Measurement> result = mapper.map(createValidKontaktregisterFieldListWithAllElements(), now()).get(0).getMeasurements();
 
         assertAll(
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_1.getStatisticId())).findFirst().get().getValue(), 1L),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_2.getStatisticId())).findFirst().get().getValue(), 2L),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_5_6.getStatisticId())).findFirst().get().getValue(), 12L),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_7.getStatisticId())).findFirst().get().getValue(), 16L),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D7_4.getStatisticId())).findFirst().get().getValue(), 32L),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D7_5.getStatisticId())).findFirst().get().getValue(), 64L),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D7_6.getStatisticId())).findFirst().get().getValue(), 128L)
+                () -> assertEquals(1L, result.stream().filter(e -> e.getId().equals(D5_1.getStatisticId())).findFirst().get().getValue()),
+                () -> assertEquals(2L, result.stream().filter(e -> e.getId().equals(D5_2.getStatisticId())).findFirst().get().getValue()),
+                () -> assertEquals(12L, result.stream().filter(e -> e.getId().equals(D5_5_6.getStatisticId())).findFirst().get().getValue()),
+                () -> assertEquals(16L, result.stream().filter(e -> e.getId().equals(D5_7.getStatisticId())).findFirst().get().getValue()),
+                () -> assertEquals(32L, result.stream().filter(e -> e.getId().equals(D5_11.getStatisticId())).findFirst().get().getValue()),
+                () -> assertEquals(64L, result.stream().filter(e -> e.getId().equals(D7_3.getStatisticId())).findFirst().get().getValue()),
+                () -> assertEquals(128L, result.stream().filter(e -> e.getId().equals(D7_4.getStatisticId())).findFirst().get().getValue())
         );
     }
 
@@ -88,12 +88,11 @@ public class StatisticsMapperTest {
         final List<Measurement> result = mapper.map(elements, now()).get(0).getMeasurements();
 
         assertAll(
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_5.getStatisticId())).findFirst(), Optional.empty()),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals(D5_6.getStatisticId())).findFirst(), Optional.empty()),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals("ChristmasSoon")).findFirst(), Optional.empty()),
-                () -> assertEquals(result.stream().filter(e -> e.getId().equals("Winter is coming")).findFirst(), Optional.empty()),
-                () -> assertEquals(result.stream().filter(e -> e.getValue() == 1072L).findFirst(), Optional.empty()),
-                () -> assertEquals(result.stream().filter(e -> e.getValue() == 1069L).findFirst(), Optional.empty())
+                () -> assertEquals(empty(), result.stream().filter(e -> e.getId().equals(D5_5.getStatisticId())).findFirst()),
+                () -> assertEquals(empty(), result.stream().filter(e -> e.getId().equals("ChristmasSoon")).findFirst()),
+                () -> assertEquals(empty(), result.stream().filter(e -> e.getId().equals("Winter is coming")).findFirst()),
+                () -> assertEquals(empty(), result.stream().filter(e -> e.getValue() == 1072L).findFirst()),
+                () -> assertEquals(empty(), result.stream().filter(e -> e.getValue() == 1069L).findFirst())
         );
     }
 
@@ -141,9 +140,9 @@ public class StatisticsMapperTest {
                 createKontaktregisterField(D5_5.getKrrField(), "4"),
                 createKontaktregisterField(D5_6.getKrrField(), "8"),
                 createKontaktregisterField(D5_7.getKrrField(), "16"),
-                createKontaktregisterField(D7_4.getKrrField(), "32"),
-                createKontaktregisterField(D7_5.getKrrField(), "64"),
-                createKontaktregisterField(D7_6.getKrrField(), "128")
+                createKontaktregisterField(D5_11.getKrrField(), "32"),
+                createKontaktregisterField(D7_3.getKrrField(), "64"),
+                createKontaktregisterField(D7_4.getKrrField(), "128")
         );
     }
 
@@ -154,9 +153,9 @@ public class StatisticsMapperTest {
                 createKontaktregisterField(D5_5.getKrrField(), "4", "8", "12", "16", "20"),
                 createKontaktregisterField(D5_6.getKrrField(), "8", "16", "24", "32", "40"),
                 createKontaktregisterField(D5_7.getKrrField(), "16", "32", "48", "64", "80"),
-                createKontaktregisterField(D7_4.getKrrField(), "32", "64", "96", "128", "160"),
-                createKontaktregisterField(D7_5.getKrrField(), "64", "128", "192", "256", "320"),
-                createKontaktregisterField(D7_6.getKrrField(), "128", "256", "384", "512", "640")
+                createKontaktregisterField(D5_11.getKrrField(), "32", "64", "96", "128", "160"),
+                createKontaktregisterField(D7_3.getKrrField(), "64", "128", "192", "256", "320"),
+                createKontaktregisterField(D7_4.getKrrField(), "128", "256", "384", "512", "640")
         );
     }
 }

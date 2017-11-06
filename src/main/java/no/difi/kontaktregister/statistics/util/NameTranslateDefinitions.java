@@ -3,15 +3,16 @@ package no.difi.kontaktregister.statistics.util;
 import java.util.Arrays;
 
 public enum NameTranslateDefinitions {
-    D5_1("Aktive brukere med e-post", "aktiveBrukereMedEpost"),
-    D5_2("Aktive brukere med mobil", "aktiveBrukereMedMobil"),
-    D5_5("Aktive brukere med reservasjon og e-post eller mobil", "aktiveBrukereMedReservasjonOgEpostEllerMobil"),
-    D5_6("Aktive brukere med reservasjon uten verken e-post eller mobil", "aktiveBrukereMedReservasjonUtenEpostEllerMobil"),
-    D5_5_6("Antall reserverte personer med e-post eller mobil", "antallReservertePersonerMedEpostEllerMobil"),
-    D5_7("Antall aktive brukere i kontaktregisteret", "antallAktiveBrukereIKontaktregisteret"),
-    D7_4("Aktive postbokser958935420", "antallPersonerMedAktivDigitalPostkasse"),
-    D7_5("Aktive postbokserDigipost984661185", "antallPersonerMedDigipost"),
-    D7_6("Aktive postboksereBoks996460320", "antallPersonerMedEboks");
+    D5_1("Aktive brukere med e-post", "brukereMedEpost"),
+    D5_2("Aktive brukere med mobil", "brukereMedMobil"),
+    D5_5("Aktive brukere med reservasjon og e-post eller mobil", "brukereMedReservasjonOgEpostEllerMobil"),
+    D5_6("Aktive brukere med reservasjon uten verken e-post eller mobil", "brukereMedReservasjonUtenVerkenEpostEllerMobil"),
+    D5_5_6("-", "brukereMedReservasjon"),
+    D5_7("Antall aktive brukere i kontaktregisteret", "brukereIKontaktregisteret"),
+    D5_11("Antall brukere som har utløpt", "brukereSomKanVarsles"),
+    D7_3("Aktive postbokserDigipost984661185", "brukereMedDigipost"),
+    D7_4("Aktive postboksereBoks996460320", "brukereMedEboks"),
+    D7_3_4("-", "brukereMedPostkasse");
 
     private final String krrField;
     private final String statisticId;

@@ -45,13 +45,15 @@ public class StatisticsMapper {
     }
 
     private List<Measurement> getMeasuermentForIndex(Map<NameTranslateDefinitions, List<Long>> measurementList, int index) {
-        List<Measurement> measurements = Stream.of(D5_1, D5_2, D5_7, D7_4, D7_5, D7_6)
+        List<Measurement> measurements = Stream.of(D5_1, D5_2, D5_6, D5_7, D5_11, D7_3, D7_4)
                 .map(f -> measurement(measurementList, f, index))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toList());
-        long valD5i5i6 = measurementList.get(D5_5).get(index) + measurementList.get(D5_6).get(index);
-        measurements.add(new Measurement(D5_5_6.getStatisticId(), valD5i5i6));
+        long brukereMedReservasjon = measurementList.get(D5_5).get(index) + measurementList.get(D5_6).get(index);
+        measurements.add(new Measurement(D5_5_6.getStatisticId(), brukereMedReservasjon));
+        long brukereMedPostkasse = measurementList.get(D7_3).get(index) + measurementList.get(D7_4).get(index);
+        measurements.add(new Measurement(D7_3_4.getStatisticId(), brukereMedPostkasse));
         return measurements;
     }
 
@@ -117,9 +119,9 @@ public class StatisticsMapper {
         validateMeasurement(D5_5, measurements);
         validateMeasurement(D5_6, measurements);
         validateMeasurement(D5_7, measurements);
-//        validateMeasurement(D7_4, measurements);
-//        validateMeasurement(D7_5, measurements);
-//        validateMeasurement(D7_6, measurements);
+        validateMeasurement(D5_11, measurements);
+        validateMeasurement(D7_3, measurements);
+        validateMeasurement(D7_4, measurements);
     }
 
     private void validateMeasurement(NameTranslateDefinitions measurement, Map<NameTranslateDefinitions, List<Long>> measurements) {
