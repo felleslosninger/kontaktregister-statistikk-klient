@@ -2,6 +2,7 @@ package no.difi.kontaktregister.statistics.configuration;
 
 import no.difi.kontaktregister.statistics.fetch.service.KontaktregisterFetch;
 import no.difi.kontaktregister.statistics.fetch.service.LastDatapoint;
+import no.difi.kontaktregister.statistics.fetch.service.ServiceProviderFetch;
 import no.difi.kontaktregister.statistics.push.mapper.StatisticsMapper;
 import no.difi.kontaktregister.statistics.push.service.KontaktregisterPush;
 import no.difi.kontaktregister.statistics.schedule.KontaktregisterScheduler;
@@ -79,4 +80,10 @@ public class Config {
     public StatisticsMapper statisticsMapper() {
         return new StatisticsMapper();
     }
+
+    @Bean
+    public ServiceProviderFetch spFetch() {
+        return new ServiceProviderFetch(kontaktregisterUrl, restTemplate());
+    }
+
 }
