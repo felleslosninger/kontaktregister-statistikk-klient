@@ -36,12 +36,7 @@ public class DataTransfer {
         fields.addAll(d5Report);
         fields.addAll(d7Report);
         final List<TimeSeriesPoint> datapoint = mapper.map(fields, from);
-        if (datapoint.size() == 1) {
-            push.perform(kontaktregister.seriesId(), datapoint.get(0));
-        }
-        else {
-            push.perform(kontaktregister.seriesId(), datapoint);
-        }
+        push.perform(kontaktregister.seriesId(), datapoint);
     }
 
 }

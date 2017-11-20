@@ -16,7 +16,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -25,9 +24,6 @@ public class KontaktregisterPushTest {
     private ch.qos.logback.classic.Logger root;
 
     private static final String OWNER = "991825827";
-    private static final String USERNAME = "991825827";
-    private static final String BASEURL = "http://eid-test-docker.dmz.local";
-    private static final String PASSWORD = "password";
 
     @Mock private Appender<ch.qos.logback.classic.spi.ILoggingEvent> appenderMock;
     @Mock private IngestClient ingestClientMock;
@@ -62,20 +58,6 @@ public class KontaktregisterPushTest {
         }
 
         @Test
-        @DisplayName("Should call MeasurementDistance.hours in statistics API")
-        public void shouldCallMeasurementDistanceHoursInStatistics() {
-            ArgumentCaptor<TimeSeriesDefinition> tsdCaptor = ArgumentCaptor.forClass(TimeSeriesDefinition.class);
-
-            pushService.perform(OWNER, createTimeSeries());
-
-            assertAll(
-                    () -> verify(ingestClientMock, times(1)).ingest(tsdCaptor.capture(), any(TimeSeriesPoint.class)),
-                    () -> assertEquals(tsdCaptor.getValue().getName(), "991825827"),
-                    () -> assertEquals(tsdCaptor.getValue().getDistance(), MeasurementDistance.hours)
-            );
-        }
-
-        @Test
         @DisplayName("Should use bulk API when more than one TimeSeriesPoint")
         public void shouldUseBulkAPIWhenMoreThanOneTimeSeriesPoint() {
             ArgumentCaptor<TimeSeriesDefinition> tsdCaptor = ArgumentCaptor.forClass(TimeSeriesDefinition.class);
@@ -90,10 +72,6 @@ public class KontaktregisterPushTest {
                     () -> assertEquals(tsdCaptor.getValue().getDistance(), MeasurementDistance.hours),
                     () -> assertEquals(tspCaptor.getValue().size(), 2)
             );
-        }
-
-        private TimeSeriesPoint createTimeSeries() {
-            return TimeSeriesPoint.builder().timestamp(ZonedDateTime.now()).build();
         }
 
         private TimeSeriesPoint createTimeSeries(int plusHour) {

@@ -23,8 +23,6 @@ import static no.difi.kontaktregister.statistics.testutils.KontaktregisterFieldO
 import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D5;
 import static no.difi.kontaktregister.statistics.util.KontaktregisterReportType.D7;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -91,27 +89,6 @@ public class DataTransferTest {
 
         verify(mapperMock, times(1)).map(captor.capture(), anyObject());
         assertEquals(captor.getValue().size(), 2);
-    }
-
-    @Test
-    @DisplayName("Should push data to statistics when report is mapped")
-    public void shouldPushReportDataToStatisticsWhenReportIsMapped() {
-        Measurement m0 = new Measurement("abc", 1L);
-        Measurement m1 = new Measurement("def", 2L);
-        Measurement m2 = new Measurement("ghi", 3L);
-        final KontaktregisterField[] fields = {createaValidKontaktregisterField()};
-        when(fetchMock.perform(anyString(), anyObject(), anyObject())).thenReturn(fields);
-        when(mapperMock.map(anyObject(), anyObject())).thenReturn(createTimeSeriesPoint(m0, m1, m2));
-        ArgumentCaptor<String> sCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<TimeSeriesPoint> tCaptor = ArgumentCaptor.forClass(TimeSeriesPoint.class);
-
-        dataTransfer.transfer(null, null);
-
-        verify(pushMock, times(1)).perform(sCaptor.capture(), tCaptor.capture());
-        assertAll(
-                () -> assertEquals(tCaptor.getValue().getMeasurements().get(0).getValue(), m0.getValue()),
-                () -> assertEquals(tCaptor.getValue().getMeasurements().get(1).getValue(), m1.getValue()),
-                () -> assertEquals(tCaptor.getValue().getMeasurements().get(2).getValue(), m2.getValue()));
     }
 
     @Test
