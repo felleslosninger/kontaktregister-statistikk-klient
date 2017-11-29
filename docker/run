@@ -1,20 +1,12 @@
 #!/usr/bin/env bash
 
 run() {
-    [[ $# -eq 4 ]] || { >&2 echo "Usage: $0 USERNAME PASSWORD STACK_NAME VERSION"; return 1; }
-    local registryUser=$1
-    local registryPassword=$2
-    local stackName=$3
-    local version=$4
+    [[ $# -eq 2 ]] || { >&2 echo "Usage: $0 STACK_NAME VERSION"; return 1; }
+    local stackName=$1
+    local version=$2
     workDir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     stackFile="${workDir}/stack.yml"
-    docker login $(__registry) -u ${registryUser} -p ${registryPassword}
-    VERSION=${version} docker stack deploy --prune --with-registry-auth -c ${stackFile} ${stackName} || return 1
-    docker logout $(__registry)
-}
-
-__registry() {
-    echo -n 'eid-jenkins02.dmz.local:8081'
+    VERSION=${version} docker stack deploy --prune -c ${stackFile} ${stackName} || return 1
 }
 
 run ${@}
