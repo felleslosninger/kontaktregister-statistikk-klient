@@ -35,8 +35,26 @@ public class DataTransfer {
         List<KontaktregisterField> fields = new ArrayList<>();
         fields.addAll(d5Report);
         fields.addAll(d7Report);
+        removeTrailingZeroes(fields);
         final List<TimeSeriesPoint> datapoint = mapper.map(fields, from);
         push.perform(kontaktregister.seriesId(), datapoint);
+    }
+
+    private void removeTrailingZeroes(List<KontaktregisterField> fields) {
+        while (fields.stream().map(DataTransfer::lastValue).allMatch(DataTransfer::isZero))
+            fields.forEach(field -> field.getValues().remove(field.getValues().size()-1));
+    }
+
+    private static String lastValue(KontaktregisterField field) {
+        return field.getValues().get(field.getValues().size()-1).getValue();
+    }
+
+    private static boolean isZero(String value) {
+        try {
+            return Long.parseLong(value) == 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
 }

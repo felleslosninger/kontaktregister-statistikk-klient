@@ -5,8 +5,6 @@ import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
 import no.difi.kontaktregister.statistics.util.NameTranslateDefinitions;
 import no.difi.statistics.ingest.client.model.Measurement;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -16,8 +14,6 @@ import static java.util.stream.Collectors.toList;
 import static no.difi.kontaktregister.statistics.util.NameTranslateDefinitions.*;
 
 public class StatisticsMapper {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public List<TimeSeriesPoint> map(List<KontaktregisterField> fields, ZonedDateTime fromDateTime) {
         validateFields(fields);
@@ -99,9 +95,7 @@ public class StatisticsMapper {
                 fieldId.add(field.getValues().get(i).getValue());
             }
         }
-        NameTranslateDefinitions result = NameTranslateDefinitions.find(fieldId.toString());
-        logger.info("Translated field from D7 report, using compound field id <" + fieldId.toString() + ">. Found: " + result);
-        return result;
+        return NameTranslateDefinitions.find(fieldId.toString());
     }
 
     private void validateFields(List<KontaktregisterField> fields) {
