@@ -69,7 +69,6 @@ public class LastDatapointTest {
         return Optional.of(TimeSeriesPoint.builder()
                 .timestamp(dateTime)
                 .measurement("d5_8", 31)
-                .measurement("d5_11", 63)
                 .measurement("d5_9", 17)
                 .measurement("d5_6", 18)
                 .measurement("d5_7", 26)

@@ -9,7 +9,6 @@ public enum NameTranslateDefinitions {
     D5_6("Aktive brukere med reservasjon uten verken e-post eller mobil", "brukereMedReservasjonUtenVerkenEpostEllerMobil"),
     D5_5_6("-", "brukereMedReservasjon"),
     D5_7("Antall aktive brukere i kontaktregisteret", "brukereIKontaktregisteret"),
-    D5_11("Antall brukere som har utløpt", "brukereSomKanVarsles"),
     D7_3("Aktive postbokserDigipost984661185", "brukereMedDigipost"),
     D7_4("Aktive postboksereBoks996460320", "brukereMedEboks"),
     D7_3_4("-", "brukereMedPostkasse");

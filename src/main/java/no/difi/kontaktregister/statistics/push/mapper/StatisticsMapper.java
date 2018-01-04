@@ -41,7 +41,7 @@ public class StatisticsMapper {
     }
 
     private List<Measurement> getMeasurementForIndex(Map<NameTranslateDefinitions, List<Long>> measurementList, int index) {
-        List<Measurement> measurements = Stream.of(D5_1, D5_2, D5_5, D5_6, D5_7, D5_11, D7_3, D7_4)
+        List<Measurement> measurements = Stream.of(D5_1, D5_2, D5_5, D5_6, D5_7, D7_3, D7_4)
                 .map(f -> measurement(measurementList, f, index))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -113,7 +113,6 @@ public class StatisticsMapper {
         validateMeasurement(D5_5, measurements);
         validateMeasurement(D5_6, measurements);
         validateMeasurement(D5_7, measurements);
-        validateMeasurement(D5_11, measurements);
         validateMeasurement(D7_3, measurements);
         validateMeasurement(D7_4, measurements);
     }

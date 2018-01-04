@@ -61,7 +61,6 @@ public class StatisticsMapperTest {
                 () -> assertEquals(2L, result.stream().filter(e -> e.getId().equals(D5_2.getStatisticId())).findFirst().get().getValue()),
                 () -> assertEquals(12L, result.stream().filter(e -> e.getId().equals(D5_5_6.getStatisticId())).findFirst().get().getValue()),
                 () -> assertEquals(16L, result.stream().filter(e -> e.getId().equals(D5_7.getStatisticId())).findFirst().get().getValue()),
-                () -> assertEquals(32L, result.stream().filter(e -> e.getId().equals(D5_11.getStatisticId())).findFirst().get().getValue()),
                 () -> assertEquals(64L, result.stream().filter(e -> e.getId().equals(D7_3.getStatisticId())).findFirst().get().getValue()),
                 () -> assertEquals(128L, result.stream().filter(e -> e.getId().equals(D7_4.getStatisticId())).findFirst().get().getValue())
         );
@@ -127,7 +126,6 @@ public class StatisticsMapperTest {
                 () -> assertEquals(result.stream().filter(e -> e.getValue() == index*2).findFirst().get().getValue(), index*2),
                 () -> assertEquals(result.stream().filter(e -> e.getValue() == index*4 + index*8).findFirst().get().getValue(), index*4 + index*8),
                 () -> assertEquals(result.stream().filter(e -> e.getValue() == index*16).findFirst().get().getValue(), index*16),
-                () -> assertEquals(result.stream().filter(e -> e.getValue() == index*32).findFirst().get().getValue(), index*32),
                 () -> assertEquals(result.stream().filter(e -> e.getValue() == index*64).findFirst().get().getValue(), index*64),
                 () -> assertEquals(result.stream().filter(e -> e.getValue() == index*128).findFirst().get().getValue(), index*128)
         );
@@ -140,7 +138,6 @@ public class StatisticsMapperTest {
                 createKontaktregisterField(D5_5.getKrrField(), "4"),
                 createKontaktregisterField(D5_6.getKrrField(), "8"),
                 createKontaktregisterField(D5_7.getKrrField(), "16"),
-                createKontaktregisterField(D5_11.getKrrField(), "32"),
                 createKontaktregisterField(D7_3.getKrrField(), "64"),
                 createKontaktregisterField(D7_4.getKrrField(), "128")
         );
@@ -153,7 +150,6 @@ public class StatisticsMapperTest {
                 createKontaktregisterField(D5_5.getKrrField(), "4", "8", "12", "16", "20"),
                 createKontaktregisterField(D5_6.getKrrField(), "8", "16", "24", "32", "40"),
                 createKontaktregisterField(D5_7.getKrrField(), "16", "32", "48", "64", "80"),
-                createKontaktregisterField(D5_11.getKrrField(), "32", "64", "96", "128", "160"),
                 createKontaktregisterField(D7_3.getKrrField(), "64", "128", "192", "256", "320"),
                 createKontaktregisterField(D7_4.getKrrField(), "128", "256", "384", "512", "640")
         );
