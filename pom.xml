@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.0.M6</version>
+        <version>2.0.0.RC1</version>
     </parent>
 
     <scm>
@@ -20,9 +20,9 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <difi.docker.registry>docker.io/difi</difi.docker.registry>
+        <no.difi.jenkins-pipeline.docker-registry>local</no.difi.jenkins-pipeline.docker-registry>
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
-        <ingestclient.version>2017-11-28-0928-7bf9210</ingestclient.version>
+        <ingestclient.version>2018-02-14-1947-6842cf7</ingestclient.version>
     </properties>
 
     <dependencies>
@@ -59,7 +59,8 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -69,12 +70,22 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19</version>
+                <version>2.19.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.platform</groupId>
+                        <artifactId>junit-platform-surefire-provider</artifactId>
+                        <version>1.0.3</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>5.0.3</version>
+                    </dependency>
+                </dependencies>
             </plugin>
-
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -133,7 +144,7 @@
                                     </inline>
                                 </assembly>
                             </build>
-                            <name>${difi.docker.registry}/${project.artifactId}:${project.version}</name>
+                            <name>${no.difi.jenkins-pipeline.docker-registry}/${project.artifactId}:${project.version}</name>
                             <run>
                                 <ports>
                                     <port>9000:8080</port>
@@ -170,7 +181,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>${difi.docker.registry}/${project.artifactId}:${project.version}</name>
+                                    <name>${no.difi.jenkins-pipeline.docker-registry}/${project.artifactId}:${project.version}</name>
                                     <build>
                                         <labels>
                                             <label>ScmId=${buildNumber}</label>

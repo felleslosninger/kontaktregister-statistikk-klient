@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   kontaktregister-statistikk-klient:
-    image: difi/kontaktregister-statistikk-klient:${VERSION}
+    image: ${REGISTRY}/kontaktregister-statistikk-klient:${VERSION}
     ports:
       - "8084:8080"
     configs:
@@ -12,10 +12,13 @@ services:
       - source: kontaktregister-statistikk-klient_ingest-password
         target: krr-stat-pumba
     networks:
-      - statistics
+      - net
+      - statistics_net
 
 networks:
-  statistics:
+  net:
+    driver: overlay
+  statistics_net:
     external: true
 
 secrets:
@@ -25,4 +28,3 @@ secrets:
 configs:
   kontaktregister-statistikk-klient:
     external: true
-

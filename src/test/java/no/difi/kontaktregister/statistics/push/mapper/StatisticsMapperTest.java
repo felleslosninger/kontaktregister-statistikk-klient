@@ -29,29 +29,6 @@ public class StatisticsMapperTest {
     }
 
     @Test
-    @DisplayName("Mapping should fail with MapperError when no fields is defined")
-    public void shouldFailMappingWhenMeasurementIsNotGiven() {
-        assertThrows(MapperError.class, () -> mapper.map(null, now()));
-    }
-
-    @Test
-    @DisplayName("Mapper must contain all fields")
-    public void shouldFailWhenReportsDoesNotContainAllFields() {
-        MapperError exception = assertThrows(MapperError.class,
-                () -> mapper.map(singletonList(createKontaktregisterField(D5_5.getKrrField(), "42")), now()));
-        assertTrue(exception.getMessage().matches("Measurement .* is missing.*"));
-    }
-
-    @Test
-    @DisplayName("Mapper should not fail when all elements are filtered away from result")
-    public void shouldNotFailWhenResultsFromMapIsEmpty() {
-        MapperError exception = assertThrows(MapperError.class,
-                () -> mapper.map(singletonList(createKontaktregisterField("None existing", "42")), now()));
-
-        assertEquals(exception.getMessage(), "No valid data after index mapping");
-    }
-
-    @Test
     @DisplayName("Mapper should contain all desired fields with values in output")
     public void shouldMapFieldsWhenAvailable() {
         final List<Measurement> result = mapper.map(createValidKontaktregisterFieldListWithAllElements(), now()).get(0).getMeasurements();
@@ -87,7 +64,6 @@ public class StatisticsMapperTest {
         final List<Measurement> result = mapper.map(elements, now()).get(0).getMeasurements();
 
         assertAll(
-                () -> assertEquals(empty(), result.stream().filter(e -> e.getId().equals(D5_5.getStatisticId())).findFirst()),
                 () -> assertEquals(empty(), result.stream().filter(e -> e.getId().equals("ChristmasSoon")).findFirst()),
                 () -> assertEquals(empty(), result.stream().filter(e -> e.getId().equals("Winter is coming")).findFirst()),
                 () -> assertEquals(empty(), result.stream().filter(e -> e.getValue() == 1072L).findFirst()),
@@ -104,19 +80,6 @@ public class StatisticsMapperTest {
 
         for (int index = 0; index < tsp.size(); index++) {
             assertMeasurement(tsp.get(index).getMeasurements(), index+1);
-        }
-    }
-
-    @Test
-    @DisplayName("Mapper should map list of datapoints with correct times")
-    public void shouldMapDatapointTimeCorrectWhenMultipleTimeSeries() {
-        final List<KontaktregisterField> elements = createValidKontaktregisterFieldListWithAllElementsAndMultipleValuesForEachField();
-
-        final ZonedDateTime reportDataDateTime = now();
-        List<TimeSeriesPoint> tsp = mapper.map(elements, reportDataDateTime);
-
-        for (int index = 0; index < tsp.size(); index++) {
-            assertEquals(tsp.get(index).getTimestamp().getHour(), reportDataDateTime.getHour() + index - 1);
         }
     }
 

@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+export VERSION=DEV-SNAPSHOT
+export REGISTRY=local
+configName=kontaktregister-statistikk-klient
+secretName=kontaktregister-statistikk-klient_ingest-password
+stackName=krr
+
+__ok() {
+    printf "\u2714 $1\n"
+}
+
+assertOrEnableSwarmMode() {
+    docker node ls 2>&1 >/dev/null || {
+        read -p "Enable swarm mode in Docker? [Y/n] " answer
+        [[ -z ${answer} ]] && answer='y'
+        [[ ${answer} =~ [yY] ]] && { docker swarm init; } || { return 1; }
+    }
+    __ok "Swarm mode enabled"
+}
+
+assertStatisticsStackIsRunning() {
+    docker stack ps statistics 2>&1 >/dev/null || { >&2 echo "Statistics stack is not running."; return 1; }
+    __ok "Statistics stack is running"
+}
+
+assertOrCreateIngestPassword() {
+    [[ -z $(docker secret ls --quiet --filter name=${secretName}) ]] && {
+        read -p "No password exists for Statistics Ingest API. Do you want me to create one? [Y/n] " answer
+        [[ -z ${answer} ]] && answer='y'
+        [[ ${answer} =~ [yY] ]] && { echo -n "$(createIngestPassword)" | docker secret create ${secretName} -; } || { return 1; }
+    }
+    __ok "Ingest password exists"
+}
+
+assertOrCreateConfig() {
+    [[ -z $(docker config ls -qf name=${configName}) ]] && {
+        read -p "No configuration found for service. Do you want me to create one? [Y/n] " answer
+        [[ -z ${answer} ]] && answer='y'
+        [[ ${answer} =~ [yY] ]] && { echo "$(configString)" | docker config create ${configName} -; } || { exit 1; }
+    }
+    __ok "Configuration exists"
+}
+
+configString() {
+    echo \
+"url.base.kontaktregister=https://admin.difi.eon.no
+url.base.ingest.statistikk=http://statistics_ingest:8080
+"
+}
+
+createIngestPassword() {
+    local user="991825827"
+    local password
+    password=$(curl \
+        -sS -f --connect-timeout 3 --max-time 10 \
+        -H "Content-Type: application/json;charset=UTF-8" \
+        -XPOST \
+        http://localhost:8083/credentials/${user}/short) || return $?
+    echo -n "${password}"
+}
+
+buildImages() {
+    mvn package -Dno.difi.jenkins-pipeline.docker-registry=$REGISTRY -DskipTests || return 1
+}
+
+deployStack() {
+    docker stack deploy -c docker/stack.yml --resolve-image=never ${stackName} || return 1
+    echo "Stack successfully deployed. You can remove it with 'docker stack rm ${stackName}'"
+}
+
+clean() {
+    echo "Cleaning up previous deploy"
+    docker stack rm  ${stackName}
+    [[ -z $(docker config ls -qf name=${configName}) ]] || docker config rm ${configName}
+    [[ -z $(docker secret ls --quiet --filter name=${secretName}) ]] || docker secret rm ${secretName}
+    echo "Cleaned"
+}
+
+[[ $1 == "clean" ]] && { clean; exit; }
+[[ $1 == "-c" ]] && clean
+assertOrEnableSwarmMode || exit 1
+assertStatisticsStackIsRunning || return 1
+assertOrCreateIngestPassword || exit 1
+assertOrCreateConfig || exit 1
+buildImages || exit 1
+deployStack || exit 1

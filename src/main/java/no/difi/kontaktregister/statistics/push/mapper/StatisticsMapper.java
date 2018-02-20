@@ -5,6 +5,7 @@ import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
 import no.difi.kontaktregister.statistics.util.NameTranslateDefinitions;
 import no.difi.statistics.ingest.client.model.Measurement;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
+import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -12,12 +13,12 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static no.difi.kontaktregister.statistics.util.NameTranslateDefinitions.*;
+import static no.difi.statistics.ingest.client.model.TimeSeriesPoint.timeSeriesPoint;
 
+@Component
 public class StatisticsMapper {
 
     public List<TimeSeriesPoint> map(List<KontaktregisterField> fields, ZonedDateTime fromDateTime) {
-        validateFields(fields);
-
         return mapMeasurements(fields, fromDateTime);
     }
 
@@ -28,11 +29,10 @@ public class StatisticsMapper {
 
     private List<TimeSeriesPoint> mapBulk(Map<NameTranslateDefinitions, List<Long>> measurements, ZonedDateTime dateTime) {
         List<TimeSeriesPoint> tsp = new ArrayList<>();
-        validateMeasurements(measurements);
         for (int i = 0; i < measurements.get(D5_1).size(); i++) {
             tsp.add(
-                    TimeSeriesPoint.builder()
-                            .timestamp(dateTime.minusHours(1).plusHours(i))
+                    timeSeriesPoint()
+                            .timestamp(dateTime.plusHours(i))
                             .measurements(getMeasurementForIndex(measurements, i))
                             .build()
             );
@@ -96,30 +96,6 @@ public class StatisticsMapper {
             }
         }
         return NameTranslateDefinitions.find(fieldId.toString());
-    }
-
-    private void validateFields(List<KontaktregisterField> fields) {
-        if (fields == null) {
-            throw new MapperError("Point is missing");
-        }
-    }
-
-    private void validateMeasurements(Map<NameTranslateDefinitions, List<Long>> measurements) {
-        if (measurements == null || measurements.size() == 0) {
-            throw new MapperError("No valid data after index mapping");
-        }
-        validateMeasurement(D5_1, measurements);
-        validateMeasurement(D5_2, measurements);
-        validateMeasurement(D5_5, measurements);
-        validateMeasurement(D5_6, measurements);
-        validateMeasurement(D5_7, measurements);
-        validateMeasurement(D7_3, measurements);
-        validateMeasurement(D7_4, measurements);
-    }
-
-    private void validateMeasurement(NameTranslateDefinitions measurement, Map<NameTranslateDefinitions, List<Long>> measurements) {
-        if (!measurements.containsKey(measurement))
-            throw new MapperError("Measurement " + measurement + " is missing. What we have: " + measurements.keySet());
     }
 
 }
