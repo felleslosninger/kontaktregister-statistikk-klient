@@ -7,11 +7,11 @@ Bruker rest-apiet i kontaktregisteret for å trekke ut data, og legger det inn v
 Du må ha følgende tilgjengelig:
 * JDK 1.8 eller nyere
 * Maven 3.3 eller nyere
-* Docker 1.12 eller nyere
+* Docker 17.12 eller nyere
 * Tilgang til IDPortens kontaktregister-API
 * Tilgang til statistikkapplikasjonen
 
-##Første gangs oppsett
+##Oppsett
 Etter at prosjektet er klonet, kjør
 
 `mvn package`
@@ -26,12 +26,16 @@ Applikasjonen benytter to påkrevde parametre for å angi URL til kontaktregiste
 `url.base.kontaktregister`
 `url.base.ingest.statistikk`
 
-Etter bygg kan applikasjonen startes med
+Statistikkløysingen må køyre før ein kan starte applikasjonen.
+
+For å starte applikasjonen slik at den går mot prod-admin og test-statistikk-poc kan en køyre:
 
 **localhost**
 `java -jar ./target/ krr-statistikk-klient*.jar \
   --url.base.kontaktregister=https://admin-test1.difi.eon.no \
   --url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no`
+
+For å starte applikasjonen med docker og mot ein lokal installasjon av statistikk-løysingen finnes det eit skript:
 
 **Docker**
 `mvn docker:run \
