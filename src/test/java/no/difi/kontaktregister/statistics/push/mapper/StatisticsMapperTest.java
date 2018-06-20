@@ -32,6 +32,7 @@ public class StatisticsMapperTest {
         assertAll(
                 () -> assertEquals(Long.valueOf(1L), result.get(D5_1.getStatisticId())),
                 () -> assertEquals(Long.valueOf(2L), result.get(D5_2.getStatisticId())),
+                () -> assertEquals(Long.valueOf(3L), result.get(D5_4.getStatisticId())),
                 () -> assertEquals(Long.valueOf(12L), result.get(D5_5_6.getStatisticId())),
                 () -> assertEquals(Long.valueOf(16L), result.get(D5_7.getStatisticId())),
                 () -> assertEquals(Long.valueOf(64L), result.get(D7_3.getStatisticId())),
@@ -61,6 +62,7 @@ public class StatisticsMapperTest {
         return asList(
                 createKontaktregisterField(D5_1.getKrrField(), "1"),
                 createKontaktregisterField(D5_2.getKrrField(), "2"),
+                createKontaktregisterField(D5_4.getKrrField(), "3"),
                 createKontaktregisterField(D5_5.getKrrField(), "4"),
                 createKontaktregisterField(D5_6.getKrrField(), "8"),
                 createKontaktregisterField(D5_7.getKrrField(), "16"),

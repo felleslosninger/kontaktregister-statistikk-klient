@@ -41,7 +41,7 @@ public class StatisticsMapper {
     }
 
     private Map<String, Long> getMeasurementForIndex(Map<NameTranslateDefinitions, List<Long>> measurementList, int index) {
-        Map<String, Long> measurements = Stream.of(D5_1, D5_2, D5_5, D5_6, D5_7, D7_3, D7_4)
+        Map<String, Long> measurements = Stream.of(D5_1, D5_2, D5_4, D5_5, D5_6, D5_7, D7_3, D7_4)
                 .filter(measurementList::containsKey)
                 .collect(toMap(NameTranslateDefinitions::getStatisticId, f -> measurementList.get(f).get(index)));
         long brukereMedReservasjon = measurementList.get(D5_5).get(index) + measurementList.get(D5_6).get(index);

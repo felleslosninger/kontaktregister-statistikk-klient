@@ -5,6 +5,7 @@ import java.util.Arrays;
 public enum NameTranslateDefinitions {
     D5_1("Aktive brukere med e-post", "brukereMedEpost"),
     D5_2("Aktive brukere med mobil", "brukereMedMobil"),
+    D5_4("Aktive brukere med e-post og/eller mobil", "brukereMedEpostOgEllerMobil"),
     D5_5("Aktive brukere med reservasjon og e-post eller mobil", "brukereMedReservasjonOgEpostEllerMobil"),
     D5_6("Aktive brukere med reservasjon uten verken e-post eller mobil", "brukereMedReservasjonUtenVerkenEpostEllerMobil"),
     D5_5_6("-", "brukereMedReservasjon"),
