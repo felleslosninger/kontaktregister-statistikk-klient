@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.0.RC1</version>
+        <version>2.0.0.RELEASE</version>
     </parent>
 
     <scm>
@@ -22,7 +22,7 @@
         <java.version>1.8</java.version>
         <no.difi.jenkins-pipeline.docker-registry>local</no.difi.jenkins-pipeline.docker-registry>
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
-        <ingestclient.version>2018-02-20-1256-cba142b</ingestclient.version>
+        <ingestclient.version>2018-03-20-1139-3cdff63</ingestclient.version>
     </properties>
 
     <dependencies>

@@ -4,5 +4,4 @@ pipelineWithMavenAndDocker {
     productionEnvironment = 'statistics'
     productionEnvironmentType = 'docker'
     stackName = 'krr'
-    gitSshKey = 'ssh.github.com'
 }

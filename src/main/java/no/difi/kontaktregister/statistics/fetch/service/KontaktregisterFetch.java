@@ -26,7 +26,7 @@ public class KontaktregisterFetch {
     public KontaktregisterFetch(RestTemplate restTemplate) {
         this.uriTemplate = new UriTemplate(
                 "/idporten-admin/statistics/statistics/json/" +
-                "{retportType}/" +
+                "{reportType}/" +
                 "{fromYear}/{fromMonth}/{fromDay}/{fromHour}/" +
                 "to/{toYear}/{toMonth}/{toDay}/{toHour}"
         );

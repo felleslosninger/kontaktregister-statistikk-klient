@@ -13,7 +13,7 @@ import static no.difi.statistics.ingest.client.model.TimeSeriesDefinition.timeSe
 @Component
 public class LastDatapoint {
     private final IngestClient ingestClient;
-    private final static ZonedDateTime baseTime = ZonedDateTime.of(2015, 5, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
+    protected final static ZonedDateTime baseTime = ZonedDateTime.of(2015, 5, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
 
     public LastDatapoint(IngestClient ingestClient) {
         this.ingestClient = ingestClient;

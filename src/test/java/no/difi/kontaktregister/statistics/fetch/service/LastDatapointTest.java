@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static java.time.ZonedDateTime.now;
+import static no.difi.kontaktregister.statistics.fetch.service.LastDatapoint.baseTime;
 import static no.difi.statistics.ingest.client.model.TimeSeriesPoint.timeSeriesPoint;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +39,7 @@ public class LastDatapointTest {
     @DisplayName("It should return ZoneDateTime set to 15.05.01T00 when no datapoint is found")
     public void shouldReturnNullWhenResponseCode200AndEmptyDataset() {
         when(ingestClientMock.last(anyObject())).thenReturn(Optional.empty());
-        final ZonedDateTime expected = ZonedDateTime.of(2015, 5, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
+        final ZonedDateTime expected = baseTime;
 
         assertEquals(expected, lastDatapoint.get(seriesId));
     }
