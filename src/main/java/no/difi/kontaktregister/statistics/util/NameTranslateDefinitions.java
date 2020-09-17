@@ -11,7 +11,8 @@ public enum NameTranslateDefinitions {
     D5_5_6("-", "brukereMedReservasjon"),
     D5_7("Antall aktive brukere i kontaktregisteret", "brukereIKontaktregisteret"),
     D7_3("Aktive postbokserDigipost984661185", "brukereMedDigipost"),
-    D7_4("Aktive postboksereBoks996460320", "brukereMedEboks"),
+    D7_4_OLD("Aktive postboksereBoks996460320", "brukereMedEboks"),
+    D7_4("Aktive postboksereBoks922020175", "brukereMedEboks"),
     D7_3_4("-", "brukereMedPostkasse");
 
     private final String krrField;

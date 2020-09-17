@@ -4,6 +4,8 @@ import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterValue;
 import no.difi.kontaktregister.statistics.util.NameTranslateDefinitions;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
@@ -17,6 +19,8 @@ import static no.difi.statistics.ingest.client.model.TimeSeriesPoint.timeSeriesP
 
 @Component
 public class StatisticsMapper {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public List<TimeSeriesPoint> map(List<KontaktregisterField> fields, ZonedDateTime fromDateTime) {
         return mapMeasurements(fields, fromDateTime);
@@ -46,9 +50,33 @@ public class StatisticsMapper {
                 .collect(toMap(NameTranslateDefinitions::getStatisticId, f -> measurementList.get(f).get(index)));
         long brukereMedReservasjon = measurementList.get(D5_5).get(index) + measurementList.get(D5_6).get(index);
         measurements.put(D5_5_6.getStatisticId(), brukereMedReservasjon);
-        long brukereMedPostkasse = measurementList.get(D7_3).get(index) + measurementList.get(D7_4).get(index);
+        long brukereMedDigipost = 0;
+        if(measurementList.get(D7_3) != null && measurementList.get(D7_3).get(index) != null){
+            brukereMedDigipost = measurementList.get(D7_3).get(index);
+        }else{
+            logger.error("Failed to read from Digipost fields, set to 0.");
+        }
+        long brukereMedEboks = 0;
+        if(hasEboksUsers(measurementList, index)){
+            brukereMedEboks = measurementList.get(D7_4).get(index);
+        }
+        if(hasEboksUsersWithUtdatedOrgnr(measurementList, index)) {
+            brukereMedEboks += measurementList.get(D7_4_OLD).get(index); // might be both old and new eboks orgnr inside same day/month when the orgnr switch was done. These must be added.
+        }
+        if (!hasEboksUsers(measurementList, index) && !hasEboksUsersWithUtdatedOrgnr(measurementList, index)) {
+            logger.error("Failed to read from eBoks fields, set to 0.");
+        }
+        long brukereMedPostkasse = brukereMedDigipost + brukereMedEboks;
         measurements.put(D7_3_4.getStatisticId(), brukereMedPostkasse);
         return measurements;
+    }
+
+    private boolean hasEboksUsersWithUtdatedOrgnr(Map<NameTranslateDefinitions, List<Long>> measurementList, int index) {
+        return measurementList.get(D7_4_OLD) != null && measurementList.get(D7_4_OLD).get(index) != null;
+    }
+
+    private boolean hasEboksUsers(Map<NameTranslateDefinitions, List<Long>> measurementList, int index) {
+        return measurementList.get(D7_4) != null && measurementList.get(D7_4).get(index) != null;
     }
 
     private Map<NameTranslateDefinitions, List<Long>> toHashMap(List<KontaktregisterField> fields) {
