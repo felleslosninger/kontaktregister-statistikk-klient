@@ -9,12 +9,12 @@ Advarsel: Sidan klienten baserer seg på json frå idporten-admin rapportløysin
 Du må ha følgende tilgjengelig:
 * JDK 1.8 eller nyere
 * Maven 3.3 eller nyere
-* Docker 17.12 eller nyere
+* Docker 18.06 eller nyere
 * Tilgang til IDPortens kontaktregister-API
 * Tilgang til statistikkapplikasjonen
 
 ##Oppsett
-Etter at prosjektet er klonet, kjør
+Etter at prosjektet er klonet, kjør:
 
 `mvn package`
 
