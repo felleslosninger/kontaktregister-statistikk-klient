@@ -45,7 +45,8 @@ assertOrCreateConfig() {
 configString() {
     echo \
 "url.base.kontaktregister=https://admin.difi.eon.no
-url.base.ingest.statistikk=http://statistics_ingest:8080
+url.base.ingest.statistikk=http://ingest:8080
+statistics.years.back=0
 "
 }
 
