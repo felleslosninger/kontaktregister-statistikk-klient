@@ -1,6 +1,7 @@
 package no.difi.kontaktregister.statistics;
 
 import no.difi.statistics.ingest.client.IngestClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -22,6 +23,14 @@ public class Application {
 
     public static void main(final String[] args) {
         SpringApplication.run(Application.class, args);
+    }
+
+    @Autowired
+    private Environment environment;
+
+    @Bean
+    public Properties properties() {
+        return new Properties(environment);
     }
 
     @Bean
