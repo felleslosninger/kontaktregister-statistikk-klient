@@ -1,6 +1,6 @@
 #Kontaktregister Statistikk
 
-Modul for å hente statistikk fra kontaktregister og legge inn i [statistikkløsningen}(https://github.com/difi/poc-statistics).
+Modul for å hente statistikk fra kontaktregister og legge inn i [statistikkløsningen} (https://github.com/difi/poc-statistics).
 Bruker rest-apiet i kontaktregisteret for å trekke ut data, og legger det inn v.h.a. rest-apiet til statistikkløsningen.
 
 Advarsel: Sidan klienten baserer seg på json frå idporten-admin rapportløysinga som ikkje inneheld tilstrekkeleg metadata om felta, men må basere seg på rekkefølgje av felt, så er dette ei veldig sårbar løysing dersom rapportdata endrar seg i idporten-admin.
@@ -25,21 +25,27 @@ Applikasjonen kan nå startes enten på localhost eller i en docker-container.
 Prosjektet leverer Java jar applikasjon pakket inn i Docker-bildet.
 
 Applikasjonen benytter to påkrevde parametre for å angi URL til kontaktregisteret og statistikkaplikasjonen:
-`url.base.kontaktregister`
-`url.base.ingest.statistikk`
+```
+url.base.kontaktregister
+url.base.ingest.statistikk
+```
 
 Statistikkløysingen må køyre før ein kan starte applikasjonen.
 
 For å starte applikasjonen slik at den går mot prod-admin og test-statistikk-poc kan en køyre:
 
 **localhost**
-`java -jar ./target/ krr-statistikk-klient*.jar \
+```
+java -jar ./target/krr-statistikk-klient*.jar \
   --url.base.kontaktregister=https://admin-test1.difi.eon.no \
-  --url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no`
+  --url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no
+```
 
 For å starte applikasjonen med docker og mot ein lokal installasjon av statistikk-løysingen finnes det eit skript:
 
 **Docker**
-`mvn docker:run \
-  --url.base.kontaktregister=https://admin-test1.difi.eon.no \
-  --url.base.ingest.statistikk=http://test-statistikk-inndata.difi.no`
+```
+mvn docker:run \
+  -Durl.base.kontaktregister=https://admin-test1.difi.eon.no \
+  -Durl.base.ingest.statistikk=http://test-statistikk-inndata.difi.no
+```

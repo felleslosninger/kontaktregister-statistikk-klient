@@ -2,8 +2,9 @@
 
 export VERSION=DEV-SNAPSHOT
 export REGISTRY=local
-configName=kontaktregister-statistikk-klient
-secretName=kontaktregister-statistikk-klient_ingest-password
+configName=kontaktregister-properties
+secretKeyName=kontaktregister-maskinporten-private.pem
+secretCertName=kontaktregister-maskinporten.cer
 stackName=krr
 
 __ok() {
@@ -24,13 +25,20 @@ assertStatisticsStackIsRunning() {
     __ok "Statistics stack is running"
 }
 
-assertOrCreateIngestPassword() {
-    [[ -z $(docker secret ls --quiet --filter name=${secretName}) ]] && {
-        read -p "No password exists for Statistics Ingest API. Do you want me to create one? [Y/n] " answer
+assertMaskinportenClientPrivateKey(){
+   [[ -z $(docker secret ls --quiet --filter name=${secretKeyName}) ]] && {
+    echo "Maskinporten client private key missing! You have to acquire correct private key which matches public key stored in Maskinporten and manually add this as docker secret: docker secret create ${secretKeyName} <privatekey.pem>"; return 1;
+  }
+  __ok "Maskinporten client private key exists"
+}
+
+assertOrCreateMaskinportenClientCert() {
+    [[ -z $(docker secret ls --quiet --filter name=${secretCertName}) ]] && {
+        read -p "No maskinporten client certificate exists for Statistics Ingest API. Do you want to create one? [Y/n] " answer
         [[ -z ${answer} ]] && answer='y'
-        [[ ${answer} =~ [yY] ]] && { echo -n "$(createIngestPassword)" | docker secret create ${secretName} -; } || { return 1; }
+        [[ ${answer} =~ [yY] ]] && { docker secret create ${secretCertName} docker/kontaktregister-statistikk-klient-test1.cer; } || { exit 1; }
     }
-    __ok "Ingest password exists"
+    __ok "Maskinporten client certificate exists"
 }
 
 assertOrCreateConfig() {
@@ -46,8 +54,21 @@ configString() {
     echo \
 "url.base.kontaktregister=https://admin.difi.eon.no
 url.base.ingest.statistikk=http://ingest:8080
+maskinporten.iss=16442c2c-6e5b-40b9-980b-56b185ff3a53
+maskinporten.aud=https://test1.maskinporten.no/
+maskinporten.token-endpoint=https://test1.maskinporten.no/token
+maskinporten.kid=70eeee66-f066-478f-a0fe-88220b8e00e3
 statistics.years.back=0
 "
+
+#"url.base.admin=https://admin.difi.eon.no
+#url.base.ingest.statistikk=http://ingest:8080
+#maskinporten.iss=077c546f-9428-49db-ad9a-9ab067729836
+#maskinporten.aud=https://ver2.maskinporten.no/
+#maskinporten.token-endpoint=https://ver2.maskinporten.no/token
+#maskinporten.kid=2252976e-bb5b-4bf5-aca3-370b3251b20b
+#statistics.years.back=3
+#"
 }
 
 createIngestPassword() {
@@ -82,7 +103,8 @@ clean() {
 [[ $1 == "-c" ]] && clean
 assertOrEnableSwarmMode || exit 1
 assertStatisticsStackIsRunning || return 1
-assertOrCreateIngestPassword || exit 1
+assertMaskinportenClientPrivateKey || exit 1
+assertOrCreateMaskinportenClientCert || exit 1
 assertOrCreateConfig || exit 1
 buildImages || exit 1
 deployStack || exit 1

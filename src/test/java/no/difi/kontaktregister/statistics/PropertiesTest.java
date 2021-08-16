@@ -24,6 +24,9 @@ public class PropertiesTest {
     @BeforeEach
     public void setup() {
         initMocks(this);
+
+        when(environment.getRequiredProperty("url.base.admin")).thenReturn("http://test.admin.org");
+        when(environment.getRequiredProperty("url.base.ingest.statistikk")).thenReturn("http://test.stat.org");
     }
 
     @Test

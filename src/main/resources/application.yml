@@ -1,0 +1,33 @@
+info:
+    version: @project.version@
+management:
+    metrics:
+        tags:
+            application: "kontaktregister-statistikk-klient"
+    endpoints:
+        web:
+            base-path: /
+            path-mapping:
+                info: version
+
+## Maskinporten integration
+maskinporten:
+    #client-id==iss
+    #  iss: ba40589f-8803-43f6-8254-f14e960d8b24
+    #  aud: https://test1.maskinporten.no/
+    #  token-endpoint: https://test1.maskinporten.no/token
+    #  kid: 25d5faaf-3d15-43fb-8132-a1d34dd84df7
+    scope: digdir:statistikk.skriv
+    connect-timeout: 3000
+    read-timeout: 5000
+    max-connections: 20
+    max-connections-per-route: 20
+    client-keys:
+        certificate: file:/run/secrets/maskinporten.cer
+        private-key: file:/run/secrets/maskinporten-private.pem
+#  keystore:
+#    type: JKS
+#    path: classpath:keystore.jks
+#    password: nx83uaKatof8
+#    key-alias: idporten-innlogging-statistikk-klient
+#    key-password: nx83uaKatof8

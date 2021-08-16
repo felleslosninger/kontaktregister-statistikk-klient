@@ -6,25 +6,29 @@ services:
     ports:
       - "8084:8080"
     configs:
-      - source: kontaktregister-statistikk-klient
+      - source: kontaktregister-properties
         target: /application.properties
     secrets:
-      - source: kontaktregister-statistikk-klient_ingest-password
-        target: krr-stat-pumba
+      - source: kontaktregister-maskinporten.cer
+        target: maskinporten.cer
+      - source: kontaktregister-maskinporten-private.pem
+        target: maskinporten-private.pem
     networks:
       - net
-      - statistics_net
+      - statistics-api_net
 
 networks:
   net:
     driver: overlay
-  statistics_net:
+  statistics-api_net:
     external: true
 
 secrets:
-  kontaktregister-statistikk-klient_ingest-password:
+  kontaktregister-maskinporten.cer:
+    external: true
+  kontaktregister-maskinporten-private.pem:
     external: true
 
 configs:
-  kontaktregister-statistikk-klient:
+  kontaktregister-properties:
     external: true

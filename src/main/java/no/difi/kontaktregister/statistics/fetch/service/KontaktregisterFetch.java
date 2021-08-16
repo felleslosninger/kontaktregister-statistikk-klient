@@ -1,8 +1,10 @@
 package no.difi.kontaktregister.statistics.fetch.service;
 
+import no.difi.kontaktregister.statistics.Properties;
 import no.difi.kontaktregister.statistics.fetch.consumer.KontaktregisterField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -11,7 +13,6 @@ import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.System.currentTimeMillis;
@@ -22,9 +23,10 @@ public class KontaktregisterFetch {
     private final RestTemplate restTemplate;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-
-    public KontaktregisterFetch(RestTemplate restTemplate) {
+    @Autowired
+    public KontaktregisterFetch(Properties properties, RestTemplate restTemplate) {
         this.uriTemplate = new UriTemplate(
+                properties.getIdportenAdminUrl() +
                 "/idporten-admin/statistics/statistics/json/" +
                 "{reportType}/" +
                 "{fromYear}/{fromMonth}/{fromDay}/{fromHour}/" +

@@ -1,0 +1,15 @@
+url:
+  base:
+    admin: http://admin.no
+    ingest:
+      statistikk: http://statistikk
+
+## Maskinporten integration
+maskinporten:
+  iss: client-id
+  aud: https://maskinporten
+  token-endpoint: https://maskinporten/token
+  #  kid: kid
+  client-keys:
+    certificate-path: file:src/test/resources/selfmade.cer
+    private-key-path: file:src/test/resources/selfmade-private.pem
