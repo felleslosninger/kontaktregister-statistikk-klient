@@ -52,13 +52,13 @@ assertOrCreateConfig() {
 
 configString() {
     echo \
-"url.base.kontaktregister=https://admin.difi.eon.no
+"url.base.admin=https://admin.difi.eon.no
 url.base.ingest.statistikk=http://ingest:8080
 maskinporten.iss=16442c2c-6e5b-40b9-980b-56b185ff3a53
 maskinporten.aud=https://test1.maskinporten.no/
 maskinporten.token-endpoint=https://test1.maskinporten.no/token
 maskinporten.kid=70eeee66-f066-478f-a0fe-88220b8e00e3
-statistics.years.back=0
+statistics.years.back=1
 "
 
 #"url.base.admin=https://admin.difi.eon.no

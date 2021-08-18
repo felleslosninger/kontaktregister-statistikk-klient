@@ -23,8 +23,8 @@ maskinporten:
     max-connections: 20
     max-connections-per-route: 20
     client-keys:
-        certificate: file:/run/secrets/maskinporten.cer
-        private-key: file:/run/secrets/maskinporten-private.pem
+        certificate-path: file:/run/secrets/maskinporten.cer
+        private-key-path: file:/run/secrets/maskinporten-private.pem
 #  keystore:
 #    type: JKS
 #    path: classpath:keystore.jks
