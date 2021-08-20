@@ -4,7 +4,7 @@ services:
   kontaktregister-statistikk-klient:
     image: ${REGISTRY}/kontaktregister-statistikk-klient:${VERSION}
     ports:
-      - "8084:8080"
+      - "8085:8080"
     configs:
       - source: kontaktregister-properties
         target: /application.properties
