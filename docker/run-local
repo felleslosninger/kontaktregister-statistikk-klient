@@ -5,7 +5,7 @@ export REGISTRY=local
 configName=kontaktregister-properties
 secretKeyName=kontaktregister-maskinporten-private.pem
 secretCertName=kontaktregister-maskinporten.cer
-stackName=krr
+stackName=kontaktregister
 
 __ok() {
     printf "\u2714 $1\n"
