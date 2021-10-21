@@ -22,7 +22,7 @@
         <java.version>1.8</java.version>
         <no.difi.jenkins-pipeline.docker-registry>local</no.difi.jenkins-pipeline.docker-registry>
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
-        <ingestclient.version>2021-04-30-0608-f17eac4</ingestclient.version>
+        <ingestclient.version>2021-10-21-1125-d9d7761</ingestclient.version>
         <spring.boot.version>2.4.5</spring.boot.version>
     </properties>
 

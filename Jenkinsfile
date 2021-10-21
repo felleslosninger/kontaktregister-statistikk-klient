@@ -1,7 +1,7 @@
 pipelineWithMavenAndDocker {
     stagingEnvironment = 'statistics-staging'
     stagingEnvironmentType = 'docker'
-    productionEnvironment = 'statistics'
+//     productionEnvironment = 'statistics'
     productionEnvironmentType = 'docker'
     stackName = 'kontaktregister'
 }
