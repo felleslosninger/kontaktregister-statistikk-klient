@@ -1,6 +1,6 @@
 #Kontaktregister Statistikk
 
-Modul for å hente statistikk fra kontaktregister og legge inn i [statistikkløsningen} (https://github.com/difi/poc-statistics).
+Modul for å hente statistikk fra kontaktregister og legge inn i [statistikkløsningen](https://github.com/difi/poc-statistics).
 Bruker rest-apiet i kontaktregisteret for å trekke ut data, og legger det inn v.h.a. rest-apiet til statistikkløsningen.
 
 Advarsel: Sidan klienten baserer seg på json frå idporten-admin rapportløysinga som ikkje inneheld tilstrekkeleg metadata om felta, men må basere seg på rekkefølgje av felt, så er dette ei veldig sårbar løysing dersom rapportdata endrar seg i idporten-admin.
