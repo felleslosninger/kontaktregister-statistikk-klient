@@ -4,6 +4,7 @@ import no.difi.kontaktregister.statistics.fetch.service.KontaktregisterFetch;
 import no.difi.kontaktregister.statistics.maskinporten.MaskinportenIntegration;
 import no.difi.kontaktregister.statistics.push.mapper.StatisticsMapper;
 import no.difi.statistics.ingest.client.IngestClient;
+import no.difi.statistics.ingest.client.IngestService;
 import no.difi.statistics.ingest.client.model.IngestResponse;
 import no.difi.statistics.ingest.client.model.TimeSeriesDefinition;
 import no.difi.statistics.ingest.client.model.TimeSeriesPoint;
@@ -48,7 +49,15 @@ public class KontaktregisterPush {
                 points.get(0).getTimestamp(),
                 points.get(points.size() - 1).getTimestamp()
         );
-        IngestResponse response = ingestClient.ingest(tsd, points, accessToken);
+        IngestResponse response;
+        try {
+            response = ingestClient.ingest(tsd, points, accessToken);
+        } catch (IngestService.Unauthorized e) {
+            logger.info("Unautorized access-token: " + e.getMessage()); // normal flow, do not want to log stacktrace as error.
+            accessToken = maskinportenIntegration.acquireNewAccessToken();
+            response = ingestClient.ingest(tsd, points, accessToken);
+            logger.info("New access-token fetched from Maskinporten and used successfully against inndata-api.");
+        }
         if (!response.ok()) {
             logger.warn("Following points could not be pushed:\n" + generateReport(response, points));
         }
