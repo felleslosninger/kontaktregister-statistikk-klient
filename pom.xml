@@ -24,7 +24,7 @@
         <artifactory.url>http://eid-artifactory.dmz.local:8080/artifactory</artifactory.url>
         <ingestclient.version>2021-04-30-0608-f17eac4</ingestclient.version>
         <spring.boot.version>2.4.5</spring.boot.version>
-        <log4j2.version>2.17.0</log4j2.version>
+        <log4j2.version>2.17.1</log4j2.version>
     </properties>
 
     <dependencies>
